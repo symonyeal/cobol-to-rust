@@ -1,5 +1,29 @@
 # Decision journal
 
+## 2026-11-06 — Discover an input outside the argument list
+
+**Problem:** The initial calculator corpus labelled three cases as multiplication, but the captured operator was `s`, not `*`.
+
+**Options:** Assume the shell had passed the intended arguments, change the reference build to disable expansion, or treat native startup expansion as observable behavior.
+
+**Choice:** Preserve the unchanged source and compiler flags. Retain `packed-v1` captures, use `packed-v2` for empty-directory arithmetic plus explicit one-file/two-file wildcard cases, and reproduce the tested literal-star expansion in Rust. Add optional per-scenario reference arguments without changing existing case manifests.
+
+**Evidence:** The 28-scenario v1 baseline had three identical runs each. Its sentinel file caused `*` to expand to `sentinel.bin`. The 31-scenario v2 baseline confirms actual multiplication in empty directories and argument shifting with two filenames. The first Rust debug verification matches all 31 scenarios. General Windows wildcard and non-ASCII argument compatibility remain unvalidated.
+
+**Lesson:** A process's input contract can include directory contents even when its source opens no files. Capture actual behavior before naming coverage.
+
+## 2026-11-06 — Reject a mathematically plausible numeric correction
+
+**Problem:** The calculator's unsigned result displays the magnitude of subtraction below zero. Saturating subtraction would silently change that behavior.
+
+**Options:** Correct negative arithmetic, reject such inputs, or preserve the reference's visible result.
+
+**Choice:** Preserve `1 - 9999` as `00009998`. Exercise the alternative as a deliberate defect, then restore the port.
+
+**Evidence:** `scripts/check-calculator-defect.py` changes `a.abs_diff(b)` to `a.saturating_sub(b)`. Local verification returns 1, rejects `negative-result` at stdout offset 31, and confirms the baseline SHA is unchanged. Restored debug verification passes 31 scenarios. The script repeats this experiment in clean Windows CI.
+
+**Lesson:** A familiar arithmetic operation is still a compatibility decision. A passing comparison earns trust by rejecting a concrete, plausible deviation.
+
 These entries preserve consequential choices for engineering review and later LinkedIn posts. Suggested wording is limited to evidence in the repository. Posts are not published by this workbench.
 
 ## 2026-11-06 — Define what the migration must preserve
@@ -91,3 +115,15 @@ These entries preserve consequential choices for engineering review and later Li
 **Evidence:** `.gitattributes`, the [clean Windows CI run](https://github.com/symonyeal/cobol-to-rust/actions/runs/42294427851), and `docs/evidence/clean-windows-ci.json`. All 962 compiler-file hashes match. Direct comparison found equal raw streams, status and file bytes across all fifty scenario observation pairs in debug and release. The earlier captures remain retained; no acceptance output was normalized.
 
 **Public wording:** “A clean Windows run reproduced the same program observations using the pinned tool files. The cross-machine audit also exposed a manifest line-ending difference, which I recorded through the baseline process.” Each physical installation still has its own profile fingerprint.
+
+## 2026-11-06 — Add a bounded numeric migration case
+
+**Problem:** The first phase's formatter, sort and report results leave packed-decimal argument conversion and arithmetic behavior untested. A larger source alone would not identify which new capability the workbench can preserve.
+
+**Options:** CICS samples introduce transaction-system dependencies; z390 demonstrations introduce additional dialect assumptions. The registered `scottieinor/simple-calc-langs` calculator has a smaller input/output boundary and declares packed-decimal operands directly.
+
+**Choice:** Select `COBOL/cobol-calc.cbl` for the next admission investigation. Inspect its actual source and revision-matched licence, preserve the source unchanged, and establish repeated reference captures before implementing Rust. This is a selection decision; successful admission and parity remain pending.
+
+**Evidence:** The inspected source declares two unsigned `PIC 9(4) PACKED-DECIMAL` operands, accepts arguments with `ACCEPT ... FROM ARGUMENT-VALUE`, and computes into unsigned `PIC 9(8)` display storage. It includes division and an unsupported-operator path that displays the result without assigning a calculation. `docs/phase-two.md` records the planned scope; the case manifest and retained captures will establish observed behavior.
+
+**Broader lesson:** Choose the next case by the behavior it can test. A bounded program can expose important numeric compatibility questions while keeping the reference executable and its observations reviewable. This case cannot establish copybook, indexed-file or mainframe compatibility, or general packed-decimal storage equivalence.

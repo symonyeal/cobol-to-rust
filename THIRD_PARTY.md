@@ -1,5 +1,7 @@
 # Third-party sources
 
+Phase two adds Scott Stevenson's `COBOL/cobol-calc.cbl` from [simple-calc-langs revision 2e7fd52165700a5dad20af91255c49f72b29212f](https://github.com/scottieinor/simple-calc-langs/tree/2e7fd52165700a5dad20af91255c49f72b29212f). The unchanged archived source matches that revision byte for byte. Its [revision-matched MIT licence](https://github.com/scottieinor/simple-calc-langs/blob/2e7fd52165700a5dad20af91255c49f72b29212f/LICENSE), copyright 2014 Scott Stevenson, is retained in `licenses/scott-stevenson-mit.txt`; `src/calculator.rs` retains the notice. Source and licence hashes are pinned in `docs/sources.json`. This admission requires no source adaptation.
+
 The COBOL programs remain external to this repository. `scripts/fetch-sources.py DESTINATION` downloads each file from its pinned upstream revision, verifies the recorded SHA-256 hashes for source and license, then writes `<folder>/<filename>` and `<folder>/LICENSE` beneath the destination.
 
 | Program | Upstream revision | License | Upstream license |

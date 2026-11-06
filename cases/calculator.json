@@ -1,0 +1,538 @@
+{
+  "schema_version": 1,
+  "id": "calculator",
+  "admission": "admitted",
+  "blockers": [],
+  "reviewed": true,
+  "source_revision": "2e7fd52165700a5dad20af91255c49f72b29212f",
+  "sources": [
+    {
+      "root": "external",
+      "path": "scottieinor_simple-calc-langs/cobol-calc.cbl",
+      "sha256": "b390906e9044d7779b602f5040196d69b7f9e167bf207f69208d3028f743ab4e"
+    }
+  ],
+  "build_args": [
+    "-x",
+    "-fixed",
+    "-std=default"
+  ],
+  "reference_args": [],
+  "repetitions": 3,
+  "timeout_ms": 30000,
+  "semantics": "Unchanged packed-decimal PIC 9(4) argv operands; unsigned DISPLAY PIC 9(8) result. Finite ASCII argv corpus; no files opened. See phase-two report for conversion and error boundaries.",
+  "scenarios": [
+    {
+      "id": "addition",
+      "domain": "argv = ['12', '+', '34']; unrelated binary file must remain unchanged",
+      "initial_hex": {
+        "sentinel.bin": "00ff0d0a2041"
+      },
+      "port_args": [
+        "12",
+        "+",
+        "34"
+      ],
+      "reference_args": [
+        "12",
+        "+",
+        "34"
+      ]
+    },
+    {
+      "id": "subtraction",
+      "domain": "argv = ['34', '-', '12']; unrelated binary file must remain unchanged",
+      "initial_hex": {
+        "sentinel.bin": "00ff0d0a2041"
+      },
+      "port_args": [
+        "34",
+        "-",
+        "12"
+      ],
+      "reference_args": [
+        "34",
+        "-",
+        "12"
+      ]
+    },
+    {
+      "id": "negative-result",
+      "domain": "argv = ['1', '-', '9999']; unrelated binary file must remain unchanged",
+      "initial_hex": {
+        "sentinel.bin": "00ff0d0a2041"
+      },
+      "port_args": [
+        "1",
+        "-",
+        "9999"
+      ],
+      "reference_args": [
+        "1",
+        "-",
+        "9999"
+      ]
+    },
+    {
+      "id": "multiplication-max",
+      "domain": "argv = ['9999', '*', '9999']; empty job directory prevents MinGW wildcard expansion",
+      "initial_hex": {},
+      "port_args": [
+        "9999",
+        "*",
+        "9999"
+      ],
+      "reference_args": [
+        "9999",
+        "*",
+        "9999"
+      ]
+    },
+    {
+      "id": "addition-max",
+      "domain": "argv = ['9999', '+', '9999']; unrelated binary file must remain unchanged",
+      "initial_hex": {
+        "sentinel.bin": "00ff0d0a2041"
+      },
+      "port_args": [
+        "9999",
+        "+",
+        "9999"
+      ],
+      "reference_args": [
+        "9999",
+        "+",
+        "9999"
+      ]
+    },
+    {
+      "id": "division-exact",
+      "domain": "argv = ['100', '/', '4']; unrelated binary file must remain unchanged",
+      "initial_hex": {
+        "sentinel.bin": "00ff0d0a2041"
+      },
+      "port_args": [
+        "100",
+        "/",
+        "4"
+      ],
+      "reference_args": [
+        "100",
+        "/",
+        "4"
+      ]
+    },
+    {
+      "id": "division-truncates",
+      "domain": "argv = ['10', '/', '3']; unrelated binary file must remain unchanged",
+      "initial_hex": {
+        "sentinel.bin": "00ff0d0a2041"
+      },
+      "port_args": [
+        "10",
+        "/",
+        "3"
+      ],
+      "reference_args": [
+        "10",
+        "/",
+        "3"
+      ]
+    },
+    {
+      "id": "division-subunit",
+      "domain": "argv = ['1', '/', '9999']; unrelated binary file must remain unchanged",
+      "initial_hex": {
+        "sentinel.bin": "00ff0d0a2041"
+      },
+      "port_args": [
+        "1",
+        "/",
+        "9999"
+      ],
+      "reference_args": [
+        "1",
+        "/",
+        "9999"
+      ]
+    },
+    {
+      "id": "zero",
+      "domain": "argv = ['0', '*', '9999']; empty job directory prevents MinGW wildcard expansion",
+      "initial_hex": {},
+      "port_args": [
+        "0",
+        "*",
+        "9999"
+      ],
+      "reference_args": [
+        "0",
+        "*",
+        "9999"
+      ]
+    },
+    {
+      "id": "divide-zero",
+      "domain": "argv = ['42', '/', '0']; unrelated binary file must remain unchanged",
+      "initial_hex": {
+        "sentinel.bin": "00ff0d0a2041"
+      },
+      "port_args": [
+        "42",
+        "/",
+        "0"
+      ],
+      "reference_args": [
+        "42",
+        "/",
+        "0"
+      ]
+    },
+    {
+      "id": "zero-divide-zero",
+      "domain": "argv = ['0', '/', '0']; unrelated binary file must remain unchanged",
+      "initial_hex": {
+        "sentinel.bin": "00ff0d0a2041"
+      },
+      "port_args": [
+        "0",
+        "/",
+        "0"
+      ],
+      "reference_args": [
+        "0",
+        "/",
+        "0"
+      ]
+    },
+    {
+      "id": "unsupported",
+      "domain": "argv = ['12', '?', '34']; unrelated binary file must remain unchanged",
+      "initial_hex": {
+        "sentinel.bin": "00ff0d0a2041"
+      },
+      "port_args": [
+        "12",
+        "?",
+        "34"
+      ],
+      "reference_args": [
+        "12",
+        "?",
+        "34"
+      ]
+    },
+    {
+      "id": "operator-truncation",
+      "domain": "argv = ['12', '++', '34']; unrelated binary file must remain unchanged",
+      "initial_hex": {
+        "sentinel.bin": "00ff0d0a2041"
+      },
+      "port_args": [
+        "12",
+        "++",
+        "34"
+      ],
+      "reference_args": [
+        "12",
+        "++",
+        "34"
+      ]
+    },
+    {
+      "id": "negative-operand",
+      "domain": "argv = ['-12', '+', '3']; unrelated binary file must remain unchanged",
+      "initial_hex": {
+        "sentinel.bin": "00ff0d0a2041"
+      },
+      "port_args": [
+        "-12",
+        "+",
+        "3"
+      ],
+      "reference_args": [
+        "-12",
+        "+",
+        "3"
+      ]
+    },
+    {
+      "id": "decimal-operand",
+      "domain": "argv = ['12.75', '+', '0.5']; unrelated binary file must remain unchanged",
+      "initial_hex": {
+        "sentinel.bin": "00ff0d0a2041"
+      },
+      "port_args": [
+        "12.75",
+        "+",
+        "0.5"
+      ],
+      "reference_args": [
+        "12.75",
+        "+",
+        "0.5"
+      ]
+    },
+    {
+      "id": "operand-overflow",
+      "domain": "argv = ['12345', '+', '1']; unrelated binary file must remain unchanged",
+      "initial_hex": {
+        "sentinel.bin": "00ff0d0a2041"
+      },
+      "port_args": [
+        "12345",
+        "+",
+        "1"
+      ],
+      "reference_args": [
+        "12345",
+        "+",
+        "1"
+      ]
+    },
+    {
+      "id": "leading-zero",
+      "domain": "argv = ['0007', '*', '0003']; empty job directory prevents MinGW wildcard expansion",
+      "initial_hex": {},
+      "port_args": [
+        "0007",
+        "*",
+        "0003"
+      ],
+      "reference_args": [
+        "0007",
+        "*",
+        "0003"
+      ]
+    },
+    {
+      "id": "nonnumeric",
+      "domain": "argv = ['abc', '+', '2']; unrelated binary file must remain unchanged",
+      "initial_hex": {
+        "sentinel.bin": "00ff0d0a2041"
+      },
+      "port_args": [
+        "abc",
+        "+",
+        "2"
+      ],
+      "reference_args": [
+        "abc",
+        "+",
+        "2"
+      ]
+    },
+    {
+      "id": "numeric-suffix",
+      "domain": "argv = ['12x', '+', '2']; unrelated binary file must remain unchanged",
+      "initial_hex": {
+        "sentinel.bin": "00ff0d0a2041"
+      },
+      "port_args": [
+        "12x",
+        "+",
+        "2"
+      ],
+      "reference_args": [
+        "12x",
+        "+",
+        "2"
+      ]
+    },
+    {
+      "id": "spaces",
+      "domain": "argv = [' 12 ', '+', ' 3 ']; unrelated binary file must remain unchanged",
+      "initial_hex": {
+        "sentinel.bin": "00ff0d0a2041"
+      },
+      "port_args": [
+        " 12 ",
+        "+",
+        " 3 "
+      ],
+      "reference_args": [
+        " 12 ",
+        "+",
+        " 3 "
+      ]
+    },
+    {
+      "id": "missing-all",
+      "domain": "argv = []; unrelated binary file must remain unchanged",
+      "initial_hex": {
+        "sentinel.bin": "00ff0d0a2041"
+      },
+      "port_args": [],
+      "reference_args": []
+    },
+    {
+      "id": "missing-second",
+      "domain": "argv = ['7', '+']; unrelated binary file must remain unchanged",
+      "initial_hex": {
+        "sentinel.bin": "00ff0d0a2041"
+      },
+      "port_args": [
+        "7",
+        "+"
+      ],
+      "reference_args": [
+        "7",
+        "+"
+      ]
+    },
+    {
+      "id": "empty-operand",
+      "domain": "argv = ['', '+', '2']; unrelated binary file must remain unchanged",
+      "initial_hex": {
+        "sentinel.bin": "00ff0d0a2041"
+      },
+      "port_args": [
+        "",
+        "+",
+        "2"
+      ],
+      "reference_args": [
+        "",
+        "+",
+        "2"
+      ]
+    },
+    {
+      "id": "extra-argument",
+      "domain": "argv = ['1', '+', '2', 'ignored']; unrelated binary file must remain unchanged",
+      "initial_hex": {
+        "sentinel.bin": "00ff0d0a2041"
+      },
+      "port_args": [
+        "1",
+        "+",
+        "2",
+        "ignored"
+      ],
+      "reference_args": [
+        "1",
+        "+",
+        "2",
+        "ignored"
+      ]
+    },
+    {
+      "id": "empty-operator",
+      "domain": "argv = ['1', '', '2']; unrelated binary file must remain unchanged",
+      "initial_hex": {
+        "sentinel.bin": "00ff0d0a2041"
+      },
+      "port_args": [
+        "1",
+        "",
+        "2"
+      ],
+      "reference_args": [
+        "1",
+        "",
+        "2"
+      ]
+    },
+    {
+      "id": "signed-plus",
+      "domain": "argv = ['+12', '+', '+3']; unrelated binary file must remain unchanged",
+      "initial_hex": {
+        "sentinel.bin": "00ff0d0a2041"
+      },
+      "port_args": [
+        "+12",
+        "+",
+        "+3"
+      ],
+      "reference_args": [
+        "+12",
+        "+",
+        "+3"
+      ]
+    },
+    {
+      "id": "scientific",
+      "domain": "argv = ['1e2', '+', '2']; unrelated binary file must remain unchanged",
+      "initial_hex": {
+        "sentinel.bin": "00ff0d0a2041"
+      },
+      "port_args": [
+        "1e2",
+        "+",
+        "2"
+      ],
+      "reference_args": [
+        "1e2",
+        "+",
+        "2"
+      ]
+    },
+    {
+      "id": "comma",
+      "domain": "argv = ['1,234', '+', '2']; unrelated binary file must remain unchanged",
+      "initial_hex": {
+        "sentinel.bin": "00ff0d0a2041"
+      },
+      "port_args": [
+        "1,234",
+        "+",
+        "2"
+      ],
+      "reference_args": [
+        "1,234",
+        "+",
+        "2"
+      ]
+    },
+    {
+      "id": "wildcard-one-file",
+      "domain": "argv = ['7', '*', '3']; literal wildcard may expand before ACCEPT",
+      "initial_hex": {
+        "sentinel.bin": "00ff0d0a2041"
+      },
+      "port_args": [
+        "7",
+        "*",
+        "3"
+      ],
+      "reference_args": [
+        "7",
+        "*",
+        "3"
+      ]
+    },
+    {
+      "id": "wildcard-two-files",
+      "domain": "argv = ['7', '*', '3']; literal wildcard may expand before ACCEPT",
+      "initial_hex": {
+        "a.dat": "00",
+        "b.dat": "ff"
+      },
+      "port_args": [
+        "7",
+        "*",
+        "3"
+      ],
+      "reference_args": [
+        "7",
+        "*",
+        "3"
+      ]
+    },
+    {
+      "id": "fraction-leading-dot",
+      "domain": "argv = ['.75', '+', '2']; literal wildcard may expand before ACCEPT",
+      "initial_hex": {},
+      "port_args": [
+        ".75",
+        "+",
+        "2"
+      ],
+      "reference_args": [
+        ".75",
+        "+",
+        "2"
+      ]
+    }
+  ]
+}

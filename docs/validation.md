@@ -1,5 +1,9 @@
 # Validation ledger
 
+## Additional packed-decimal phase (2026-11-06)
+
+The unchanged Scott Stevenson calculator adds 31 finite scenarios to the original 25. The full local gate passed all 56 in debug and release, with three identical reference repetitions per scenario and unchanged captures. [Phase report](phase-two.md), [local evidence](evidence/phase-two-local.json), [negative control](evidence/calculator-rejected-defect.json), and [preserved phase-one hashes](evidence/phase-one-preserved.json) are separate from the original evidence below. Clean Windows confirmation is pending artifact inspection. This demonstrates only the manifest's argv conversion, unsigned arithmetic, display and file-tree behavior under the pinned profile; it does not certify packed storage interoperability or general COBOL numerics.
+
 Results below were obtained on 2026-11-06 using the native Windows profile `gnucobol-3.2.0-mingw32-vbisam-arnold-trembley`. The reference is GnuCOBOL 3.2.0, MinGW GCC 9.2.0, i686; Rust 1.99.1 targets x86_64 Windows. Both architectures are explicit.
 
 ## Source register

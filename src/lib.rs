@@ -1,3 +1,4 @@
+pub mod calculator;
 pub mod capture;
 pub mod formatter;
 pub mod fxsort;

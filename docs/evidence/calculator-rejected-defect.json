@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "mutation": "a.abs_diff(b) -> a.saturating_sub(b)",
+  "exit": 1,
+  "baseline_sha256": "235e9cbb18e2c705f41f1e9c648a9c5ddccd63de55ddbf1d5288510741825159",
+  "baseline_unchanged": true,
+  "rejected": [
+    {
+      "scenario": "negative-result",
+      "comparison": {
+        "differences": [
+          {
+            "actual_context_hex": "69 73 3a 20 30 30 30 30 30 30 30 30 0d 0a",
+            "actual_len": 37,
+            "artifact": "stdout",
+            "expected_context_hex": "69 73 3a 20 30 30 30 30 39 39 39 38 0d 0a",
+            "expected_len": 37,
+            "first_diff_offset": 31
+          }
+        ],
+        "equal": false
+      }
+    }
+  ]
+}

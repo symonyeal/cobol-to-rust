@@ -39,6 +39,19 @@
       "license_sha256": "ceb117351d01c54adc1da5e4f77055ed13a402a7dd6df2f6c03c087d9d66fd24",
       "license_copy": "licenses/tylerbro93-mit.txt",
       "folder": "tylerbro93_COBOL-SALES-INVENTORY-REPORT-DEMONSTRATION"
+    },
+    {
+      "id": "calculator",
+      "repository": "scottieinor/simple-calc-langs",
+      "revision": "2e7fd52165700a5dad20af91255c49f72b29212f",
+      "filename": "cobol-calc.cbl",
+      "folder": "scottieinor_simple-calc-langs",
+      "source_url": "https://raw.githubusercontent.com/scottieinor/simple-calc-langs/2e7fd52165700a5dad20af91255c49f72b29212f/COBOL/cobol-calc.cbl",
+      "source_sha256": "b390906e9044d7779b602f5040196d69b7f9e167bf207f69208d3028f743ab4e",
+      "license": "MIT",
+      "license_url": "https://raw.githubusercontent.com/scottieinor/simple-calc-langs/2e7fd52165700a5dad20af91255c49f72b29212f/LICENSE",
+      "license_sha256": "c4dd62c54d4ab4e8090517d1cb0720638f7b44ee9a641cf1924c7870dd07ee53",
+      "license_copy": "licenses/scott-stevenson-mit.txt"
     }
   ]
 }

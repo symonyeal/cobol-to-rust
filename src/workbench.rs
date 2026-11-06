@@ -29,6 +29,8 @@ pub struct Scenario {
     pub domain: String,
     pub initial_hex: BTreeMap<String, String>,
     pub port_args: Vec<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub reference_args: Option<Vec<String>>,
 }
 
 #[derive(Deserialize, Serialize)]
@@ -403,8 +405,10 @@ pub fn execute(args: &[String]) -> Result<bool> {
                 restore(&job, &initial(scenario)?)?;
                 repetitions.push(capture::capture(
                     &exe,
-                    &case
+                    &scenario
                         .reference_args
+                        .as_ref()
+                        .unwrap_or(&case.reference_args)
                         .iter()
                         .map(Into::into)
                         .collect::<Vec<_>>(),
@@ -566,6 +570,7 @@ pub fn execute(args: &[String]) -> Result<bool> {
 
 pub fn port(args: &[String]) -> Result<i32> {
     match args.first().map(String::as_str) {
+        Some("calculator") => crate::calculator::run(&args[1..]),
         Some("formatter") if args.len() == 1 => crate::formatter::run(),
         Some("sales") if args.len() == 1 => crate::sales::run(),
         Some("fxsort") if args.len() == 1 => crate::fxsort::run(),

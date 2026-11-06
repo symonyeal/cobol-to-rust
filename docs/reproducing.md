@@ -27,6 +27,17 @@ An infrastructure error returns 2. Examples include a changed compiler file, a m
 
 ## Admit another source
 
+The fourth case is the unchanged Scott Stevenson calculator. `cases/calculator.json` is its complete deterministic input corpus: argv bytes are ASCII strings and initial file bytes are hexadecimal. Its 31 scenarios include actual multiplication in empty directories, plus explicit MinGW literal-star expansion with one and two files. Scenario-level `reference_args` overrides the case-level default; old manifests omit it and retain their fingerprints.
+
+After a full baseline/verification run, reproduce its negative control and restored checks with:
+
+```text
+python scripts/check-calculator-defect.py --profile external/reference/profile.json --sources external/sources --runs runs --label first
+python scripts/check-live.py --profile external/reference/profile.json --sources external/sources --runs runs --label first
+```
+
+The defect script requires a new result filename for each label, rebuilds with saturating subtraction, requires exit 1 and the `negative-result` stdout mismatch, checks the baseline hash, restores the exact source in a `finally` block, rebuilds and verifies again. It retains the mismatch capture and `runs/calculator-defect-first.json`. The workflow runs this experiment and then rechecks all ports in debug and release. See [phase two](phase-two.md) for the finite claim boundaries.
+
 Keep its original bytes outside the repository. Verify its licence and exact revision, pin retrieval hashes, and document any source adaptation before compiling it. Enumerate external calls, copybooks, file organization and every external input. Trace paragraph fall-through and scope, field widths and scales, assignment and editing rules, and EOF/error behavior.
 
 Declare initial fixture bytes and domain descriptions in a case manifest. Inputs, intermediates and final files must remain observable at capture boundaries; programs requiring unobserved transient artifacts or surviving child processes are blocked. Establish repeated stable reference observations before implementing the port, preserve any original defects, then review the port and add the case to `cases/required.json`. The registry cannot be empty or contain duplicate case IDs.

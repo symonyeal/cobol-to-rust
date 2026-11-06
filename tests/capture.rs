@@ -166,7 +166,11 @@ fn sample() -> Capture {
         stdout: b"same\n".to_vec(),
         stderr: b"".to_vec(),
         before: BTreeMap::from([("input".into(), vec![0, 1])]),
-        after: BTreeMap::from([("empty".into(), vec![]), ("out".into(), vec![1, 2, 3])]),
+        after: BTreeMap::from([
+            ("input".into(), vec![0, 1]),
+            ("empty".into(), vec![]),
+            ("out".into(), vec![1, 2, 3]),
+        ]),
     }
 }
 
@@ -219,6 +223,7 @@ fn comparator_reports_each_independent_parity_defect() {
     let cases: Vec<(&str, Mutation)> = vec![
         ("stdout", Box::new(|c| c.stdout = b"same ".to_vec())),
         ("stdout", Box::new(|c| c.stdout = b"same".to_vec())),
+        ("stdout", Box::new(|c| c.stdout = b"same\r\n".to_vec())),
         ("stdout", Box::new(|c| c.stdout = b"same\nsame\n".to_vec())),
         ("stdout", Box::new(|c| c.stdout = b"same\0\xff\n".to_vec())),
         ("stderr", Box::new(|c| c.stderr = b"diagnostic\n".to_vec())),
@@ -237,6 +242,36 @@ fn comparator_reports_each_independent_parity_defect() {
             "after/extra",
             Box::new(|c| {
                 c.after.insert("extra".into(), vec![1]);
+            }),
+        ),
+        (
+            "after/extra-empty",
+            Box::new(|c| {
+                c.after.insert("extra-empty".into(), vec![]);
+            }),
+        ),
+        (
+            "after/empty",
+            Box::new(|c| {
+                c.after.remove("empty");
+            }),
+        ),
+        (
+            "after/out",
+            Box::new(|c| {
+                c.after.remove("out");
+            }),
+        ),
+        (
+            "after/input",
+            Box::new(|c| {
+                c.after.get_mut("input").unwrap()[0] ^= 1;
+            }),
+        ),
+        (
+            "after/input",
+            Box::new(|c| {
+                c.after.remove("input");
             }),
         ),
         (

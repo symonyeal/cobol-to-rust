@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "sources": [
+    {
+      "id": "format-number",
+      "repository": "DGFIPTools/Calculer-Moyenne-Cobol",
+      "revision": "360be06d084d6fca3903c5b522537f5413c44977",
+      "filename": "format-number.cob",
+      "source_url": "https://raw.githubusercontent.com/DGFIPTools/Calculer-Moyenne-Cobol/360be06d084d6fca3903c5b522537f5413c44977/format-number.cob",
+      "source_sha256": "106979a2e188f5a2b57e122a78eff1c065ca3fb61bd0b1b96e1ae88c836adc4b",
+      "license": "MIT",
+      "license_url": "https://raw.githubusercontent.com/DGFIPTools/Calculer-Moyenne-Cobol/360be06d084d6fca3903c5b522537f5413c44977/LICENSE",
+      "license_sha256": "6d050a1314adf5a895c659e7a416658483b7c883c4f985b3ee6b89b3f641b651",
+      "license_copy": "licenses/dgfiptools-mit.txt",
+      "folder": "DGFIPTools_Calculer-Moyenne-Cobol"
+    },
+    {
+      "id": "fxsort",
+      "repository": "IBM/cobol-is-fun",
+      "revision": "12626aa45dd244218c18d67c35ed159a958fadeb",
+      "filename": "fxsort.cbl",
+      "source_url": "https://raw.githubusercontent.com/IBM/cobol-is-fun/12626aa45dd244218c18d67c35ed159a958fadeb/my-first-program/fxsort.cbl",
+      "source_sha256": "971d185e34000f20e1200e505ec20a6fd1462884318a93f14c92fa02c75572a2",
+      "license": "Apache-2.0",
+      "license_url": "https://raw.githubusercontent.com/IBM/cobol-is-fun/12626aa45dd244218c18d67c35ed159a958fadeb/LICENSE",
+      "license_sha256": "a287a077ea7603e4af8b679849b3013c2f7c2253e4fcc8d47856487417cf425b",
+      "license_copy": "licenses/ibm-apache-2.0.txt",
+      "folder": "IBM_cobol-is-fun"
+    },
+    {
+      "id": "sales-report",
+      "repository": "tylerbro93/COBOL-SALES-INVENTORY-REPORT-DEMONSTRATION",
+      "revision": "ece4ed7efcbcc9a232318956cf9765d036a5b18f",
+      "filename": "project2.cbl",
+      "source_url": "https://raw.githubusercontent.com/tylerbro93/COBOL-SALES-INVENTORY-REPORT-DEMONSTRATION/ece4ed7efcbcc9a232318956cf9765d036a5b18f/project2.cbl",
+      "source_sha256": "43493737151f430955ad1b83e57929279652347219b25d2659053218b87b302c",
+      "license": "MIT",
+      "license_url": "https://raw.githubusercontent.com/tylerbro93/COBOL-SALES-INVENTORY-REPORT-DEMONSTRATION/ece4ed7efcbcc9a232318956cf9765d036a5b18f/LICENSE",
+      "license_sha256": "ceb117351d01c54adc1da5e4f77055ed13a402a7dd6df2f6c03c087d9d66fd24",
+      "license_copy": "licenses/tylerbro93-mit.txt",
+      "folder": "tylerbro93_COBOL-SALES-INVENTORY-REPORT-DEMONSTRATION"
+    }
+  ]
+}

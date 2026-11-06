@@ -1,0 +1,25 @@
+[package]
+name = "cobol-to-rust"
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+description = "Byte-exact batch migration verification for reviewed COBOL-to-Rust ports"
+
+[[bin]]
+name = "c2r"
+path = "src/main.rs"
+
+[dependencies]
+serde = { version = "=1.0.229", features = ["derive"] }
+serde_json = "=1.0.154"
+sha2 = "=0.10.9"
+zip = { version = "=2.6.1", default-features = false, features = ["deflate"] }
+roxmltree = "=0.21.2"
+
+[profile.dev]
+debug = 1
+incremental = false
+
+[profile.test]
+debug = 1
+incremental = false

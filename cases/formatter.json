@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "id": "formatter",
+  "admission": "admitted",
+  "blockers": [],
+  "reviewed": true,
+  "source_revision": "360be06d084d6fca3903c5b522537f5413c44977",
+  "sources": [
+    {
+      "root": "repository",
+      "path": "drivers/formatter.cob",
+      "sha256": "ce64c272c39a1b0d5927386828708beeca278249194c7832acbdca549fa8c037"
+    },
+    {
+      "root": "external",
+      "path": "DGFIPTools_Calculer-Moyenne-Cobol/format-number.cob",
+      "sha256": "106979a2e188f5a2b57e122a78eff1c065ca3fb61bd0b1b96e1ae88c836adc4b"
+    }
+  ],
+  "build_args": [
+    "-x",
+    "-fixed",
+    "-std=default"
+  ],
+  "reference_args": [],
+  "repetitions": 3,
+  "timeout_ms": 30000,
+  "semantics": "PIC 99V99 input, PIC ZZ.99 editing, group move, comma substitution; five bytes per call; persistent working storage; domain 0000 through 9999 twice in opposite order.",
+  "scenarios": [
+    {
+      "id": "all-valid-twice",
+      "domain": "Exhaustive 10000 valid PIC 99V99 values, ascending then descending; 20000 calls; all five returned bytes",
+      "initial_hex": {},
+      "port_args": []
+    }
+  ]
+}

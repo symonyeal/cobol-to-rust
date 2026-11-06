@@ -1,0 +1,1486 @@
+{
+  "schema_version": 1,
+  "claim": "Byte-exact for each declared corpus and input domain under the recorded execution profile; finite file corpora are not universal equivalence.",
+  "profile": "gnucobol-3.2.0-mingw32-vbisam-arnold-trembley",
+  "reference_architecture": "i686-windows",
+  "profile_file_manifest_sha256": "e37c1feadb488817d929f893d0b340707df321ff823ad01ae985edea7d9426ce",
+  "profile_sha256": "cfd84796f5b1a6731f36dc894a797e14e70234711223fd9375882abacc90b8eb",
+  "compiler_info_sha256": "9073ad0b47693fc618680c3d39274e3e9e488b59bb6167be0ccbdee2fb3859f1",
+  "reference_captures_unchanged": true,
+  "results": [
+    {
+      "case": "formatter",
+      "mode": "debug",
+      "status": "byte_exact",
+      "source_revision": "360be06d084d6fca3903c5b522537f5413c44977",
+      "sources": [
+        {
+          "root": "repository",
+          "path": "drivers/formatter.cob",
+          "sha256": "ce64c272c39a1b0d5927386828708beeca278249194c7832acbdca549fa8c037"
+        },
+        {
+          "root": "external",
+          "path": "DGFIPTools_Calculer-Moyenne-Cobol/format-number.cob",
+          "sha256": "106979a2e188f5a2b57e122a78eff1c065ca3fb61bd0b1b96e1ae88c836adc4b"
+        }
+      ],
+      "manifest_sha256": "5b51231dce20ae68a7864b651f7a83cba5048a23599d2e544fa417422d233e92",
+      "baseline_sha256": "31390cc3c0403dee202fcf53e75776dcbc2241890089e63ad2d1546a84b7c9c4",
+      "rust_binary_sha256": "6ab0ca84590ce322febf68cdbd16f74baf0478613a02af09f0e230e9522bce38",
+      "scenarios": [
+        {
+          "id": "all-valid-twice",
+          "domain": "Exhaustive 10000 valid PIC 99V99 values, ascending then descending; 20000 calls; all five returned bytes",
+          "equal": true,
+          "stdout_bytes": 100000,
+          "stderr_bytes": 0,
+          "stdout_sha256": "f56c03e3838854028cae5ebff7c857ad2e6132fa481850306ab20f20dc09a7c0",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "status": {
+            "code": 0,
+            "success": true
+          },
+          "files": {}
+        }
+      ]
+    },
+    {
+      "case": "fxsort",
+      "mode": "debug",
+      "status": "byte_exact",
+      "source_revision": "12626aa45dd244218c18d67c35ed159a958fadeb + two identification metadata terminators and modification notice (docs/fxsort-admission.md)",
+      "sources": [
+        {
+          "root": "external",
+          "path": "candidates/adapted/fxsort.cbl",
+          "sha256": "5662b48475500d0404ceb7fc0065fdab36cf9abadf7c810a7d8e49523909d965"
+        }
+      ],
+      "manifest_sha256": "2faf751c9b89f33df8ddff46cd4e526befdeb9bad33e40297bf3e290d5226603",
+      "baseline_sha256": "abab44c0ac1af7f747049caa1113d11c574de26d6e1a95d80063f8f42a601ce0",
+      "rust_binary_sha256": "6ab0ca84590ce322febf68cdbd16f74baf0478613a02af09f0e230e9522bce38",
+      "scenarios": [
+        {
+          "id": "empty-inputs",
+          "domain": "all three inputs empty",
+          "equal": true,
+          "stdout_bytes": 50,
+          "stderr_bytes": 0,
+          "stdout_sha256": "fd6cabf63b7b4b1936e0e39824404acadc2c6ab8090c94e1d473ca4e33f447d3",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "status": {
+            "code": 0,
+            "success": true
+          },
+          "files": {
+            "FXBOSS": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "FXJHS": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "FXLSTMRG": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "FXMXR": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "FXSORTED": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        },
+        {
+          "id": "single-record",
+          "domain": "one 80-byte record in one input",
+          "equal": true,
+          "stdout_bytes": 50,
+          "stderr_bytes": 0,
+          "stdout_sha256": "fd6cabf63b7b4b1936e0e39824404acadc2c6ab8090c94e1d473ca4e33f447d3",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "status": {
+            "code": 0,
+            "success": true
+          },
+          "files": {
+            "FXBOSS": {
+              "bytes": 80,
+              "sha256": "876644d2330a977aa3717f0646d265784c1940c86cb74e8819ca4a32724dcfab"
+            },
+            "FXJHS": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "FXLSTMRG": {
+              "bytes": 80,
+              "sha256": "876644d2330a977aa3717f0646d265784c1940c86cb74e8819ca4a32724dcfab"
+            },
+            "FXMXR": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "FXSORTED": {
+              "bytes": 80,
+              "sha256": "876644d2330a977aa3717f0646d265784c1940c86cb74e8819ca4a32724dcfab"
+            }
+          }
+        },
+        {
+          "id": "duplicate-keys-and-ties",
+          "domain": "duplicate names and equal prices across input files",
+          "equal": true,
+          "stdout_bytes": 50,
+          "stderr_bytes": 0,
+          "stdout_sha256": "fd6cabf63b7b4b1936e0e39824404acadc2c6ab8090c94e1d473ca4e33f447d3",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "status": {
+            "code": 0,
+            "success": true
+          },
+          "files": {
+            "FXBOSS": {
+              "bytes": 160,
+              "sha256": "4a1ba723ee128e020ce02a5bd9668e06eaa69e6ec9cbf6e2ddcb9af59993cff2"
+            },
+            "FXJHS": {
+              "bytes": 80,
+              "sha256": "363157ce88b56676fd51f95fc8a471fd355540bb4e24b944a3805d8a96fcd9de"
+            },
+            "FXLSTMRG": {
+              "bytes": 400,
+              "sha256": "bed0ab221f8abfa57ee7be1ffc7cecefb41c4641de38220ec4984c0bcf8da749"
+            },
+            "FXMXR": {
+              "bytes": 160,
+              "sha256": "4a1ba723ee128e020ce02a5bd9668e06eaa69e6ec9cbf6e2ddcb9af59993cff2"
+            },
+            "FXSORTED": {
+              "bytes": 400,
+              "sha256": "c2f53bfc919a6493659f9aab7777e30d9c430d113ef1d9514e260342f7d9d0fa"
+            }
+          }
+        },
+        {
+          "id": "leading-zero-and-small-values",
+          "domain": "leading-zero names and minimum cent values",
+          "equal": true,
+          "stdout_bytes": 50,
+          "stderr_bytes": 0,
+          "stdout_sha256": "fd6cabf63b7b4b1936e0e39824404acadc2c6ab8090c94e1d473ca4e33f447d3",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "status": {
+            "code": 0,
+            "success": true
+          },
+          "files": {
+            "FXBOSS": {
+              "bytes": 80,
+              "sha256": "277a89cc8042a441dd2a21bb9e4552f1fc5ef395ddc2c14c6259489f59b7f37b"
+            },
+            "FXJHS": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "FXLSTMRG": {
+              "bytes": 160,
+              "sha256": "963c15ddfde9302c4337d475430b8a069055d869a88b3f98f84c39162b441605"
+            },
+            "FXMXR": {
+              "bytes": 80,
+              "sha256": "2eb10b904ae57216e95b7a8e319febc2e64790d8fa7ec954c69b7e5bc412ea75"
+            },
+            "FXSORTED": {
+              "bytes": 160,
+              "sha256": "658842b83319a10adcf716ba550fa3907aa5ac4245874a9a9d9745ac714ea12f"
+            }
+          }
+        },
+        {
+          "id": "character-key-order",
+          "domain": "raw character price keys whose byte order differs from decimal interpretation",
+          "equal": true,
+          "stdout_bytes": 50,
+          "stderr_bytes": 0,
+          "stdout_sha256": "fd6cabf63b7b4b1936e0e39824404acadc2c6ab8090c94e1d473ca4e33f447d3",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "status": {
+            "code": 0,
+            "success": true
+          },
+          "files": {
+            "FXBOSS": {
+              "bytes": 80,
+              "sha256": "2a5e105e555733b2326bf175d7ab01e5a23f9f92174afb0f64a756a1c238d479"
+            },
+            "FXJHS": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "FXLSTMRG": {
+              "bytes": 160,
+              "sha256": "e5898b4db87e3b1fa599fa302b5962b898cc54d7e381911131dc77e6095189ef"
+            },
+            "FXMXR": {
+              "bytes": 80,
+              "sha256": "0917deb781a101f1ab5a967ee74e55fa168193f89e29d3b721ba7c5e7b111006"
+            },
+            "FXSORTED": {
+              "bytes": 160,
+              "sha256": "acafb7ab8d7158c8d3be0baafe42dd0852def1c7819a24c5fb0de0a347f28aa8"
+            }
+          }
+        },
+        {
+          "id": "currency-boundaries",
+          "domain": "zero, cent, and maximum 8-digit integer currency",
+          "equal": true,
+          "stdout_bytes": 50,
+          "stderr_bytes": 0,
+          "stdout_sha256": "fd6cabf63b7b4b1936e0e39824404acadc2c6ab8090c94e1d473ca4e33f447d3",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "status": {
+            "code": 0,
+            "success": true
+          },
+          "files": {
+            "FXBOSS": {
+              "bytes": 80,
+              "sha256": "03a1ea5ff16756b7abf9f598f7a51e4c0e04c66f00b9584e02aabb4ce18fc44a"
+            },
+            "FXJHS": {
+              "bytes": 160,
+              "sha256": "39827a3c2452d5744eb742f37067b5de0b49e9bd5590c7ecfdd8d2c8c45a203a"
+            },
+            "FXLSTMRG": {
+              "bytes": 240,
+              "sha256": "cd160e251d51972613e39ee45418704022d8220c5df9f6210f979b671ae7fc9f"
+            },
+            "FXMXR": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "FXSORTED": {
+              "bytes": 240,
+              "sha256": "cb7de13210f9f3804cf2ebe936ed0c37f7236214a7202cc8e694ac002ae0dbe8"
+            }
+          }
+        },
+        {
+          "id": "partial-fixed-record",
+          "domain": "one 80-byte record followed by a 79-byte partial record",
+          "equal": true,
+          "stdout_bytes": 50,
+          "stderr_bytes": 0,
+          "stdout_sha256": "fd6cabf63b7b4b1936e0e39824404acadc2c6ab8090c94e1d473ca4e33f447d3",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "status": {
+            "code": 0,
+            "success": true
+          },
+          "files": {
+            "FXBOSS": {
+              "bytes": 159,
+              "sha256": "18d23a11ce613e98e12d22d357a7fedc1b8af0a50fc68542fbc076250f02e710"
+            },
+            "FXJHS": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "FXLSTMRG": {
+              "bytes": 160,
+              "sha256": "1b062d560295553951ca8a7e8e7ec18b890ece9ade9b9153565b7219e9608543"
+            },
+            "FXMXR": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "FXSORTED": {
+              "bytes": 160,
+              "sha256": "1b062d560295553951ca8a7e8e7ec18b890ece9ade9b9153565b7219e9608543"
+            }
+          }
+        },
+        {
+          "id": "one-byte-record",
+          "domain": "one-byte fixed record; verify exact space padding without stale data",
+          "equal": true,
+          "stdout_bytes": 50,
+          "stderr_bytes": 0,
+          "stdout_sha256": "fd6cabf63b7b4b1936e0e39824404acadc2c6ab8090c94e1d473ca4e33f447d3",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "status": {
+            "code": 0,
+            "success": true
+          },
+          "files": {
+            "FXBOSS": {
+              "bytes": 1,
+              "sha256": "559aead08264d5795d3909718cdd05abd49572e84fe55590eef31a88a08fdffd"
+            },
+            "FXJHS": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "FXLSTMRG": {
+              "bytes": 80,
+              "sha256": "980daafc0778670f09384f45481f61e19e5edc10be74c9073bfee9c59e7d16e2"
+            },
+            "FXMXR": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "FXSORTED": {
+              "bytes": 80,
+              "sha256": "980daafc0778670f09384f45481f61e19e5edc10be74c9073bfee9c59e7d16e2"
+            }
+          }
+        },
+        {
+          "id": "missing-input-file",
+          "domain": "required FXJHS input file absent",
+          "equal": true,
+          "stdout_bytes": 50,
+          "stderr_bytes": 0,
+          "stdout_sha256": "fd6cabf63b7b4b1936e0e39824404acadc2c6ab8090c94e1d473ca4e33f447d3",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "status": {
+            "code": 0,
+            "success": true
+          },
+          "files": {
+            "FXBOSS": {
+              "bytes": 80,
+              "sha256": "03788cec477479c98abd1cb01ab71da55a9c5599952502094855a872034f0c71"
+            },
+            "FXLSTMRG": {
+              "bytes": 80,
+              "sha256": "03788cec477479c98abd1cb01ab71da55a9c5599952502094855a872034f0c71"
+            },
+            "FXMXR": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "FXSORTED": {
+              "bytes": 80,
+              "sha256": "03788cec477479c98abd1cb01ab71da55a9c5599952502094855a872034f0c71"
+            }
+          }
+        },
+        {
+          "id": "generated-three-way-merge",
+          "domain": "seed 20261106: 150 records; each input sorted by raw name; ties, punctuation, case and distinguishable payloads",
+          "equal": true,
+          "stdout_bytes": 50,
+          "stderr_bytes": 0,
+          "stdout_sha256": "fd6cabf63b7b4b1936e0e39824404acadc2c6ab8090c94e1d473ca4e33f447d3",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "status": {
+            "code": 0,
+            "success": true
+          },
+          "files": {
+            "FXBOSS": {
+              "bytes": 4000,
+              "sha256": "b7f520d197d198680c5e9a3617907116c8f831b6addfc28dad5dc740ee45d7b2"
+            },
+            "FXJHS": {
+              "bytes": 4000,
+              "sha256": "e79d97538d4589c4accf160f7a58fe6dbba097c5b817210064cac522a76ff3d3"
+            },
+            "FXLSTMRG": {
+              "bytes": 12000,
+              "sha256": "cb38221aa25334b34687634e1562864922869dab834dcdbbcabf281d9e65777a"
+            },
+            "FXMXR": {
+              "bytes": 4000,
+              "sha256": "fd719d781da4cfe6ae6afb985f39bf54545f7e465f01068a81c6f6615ffb2c62"
+            },
+            "FXSORTED": {
+              "bytes": 12000,
+              "sha256": "46579d339ebc34353ff758c5d17b6b5a075a419506129fde304c66e83279a2fd"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "case": "sales",
+      "mode": "debug",
+      "status": "byte_exact",
+      "source_revision": "ece4ed7efcbcc9a232318956cf9765d036a5b18f",
+      "sources": [
+        {
+          "root": "external",
+          "path": "tylerbro93_COBOL-SALES-INVENTORY-REPORT-DEMONSTRATION/project2.cbl",
+          "sha256": "43493737151f430955ad1b83e57929279652347219b25d2659053218b87b302c"
+        }
+      ],
+      "manifest_sha256": "2f9b5875d80c48736370853189eea9e1161fab4ccf8ed86072418a3d68719112",
+      "baseline_sha256": "83d3ef9fb1ef5c55dc793046284e6cd3f4f97bea5c9bc85cfbdffc3516e0eb62",
+      "rust_binary_sha256": "6ab0ca84590ce322febf68cdbd16f74baf0478613a02af09f0e230e9522bce38",
+      "scenarios": [
+        {
+          "id": "empty-input",
+          "domain": "empty line-sequential input",
+          "equal": true,
+          "stdout_bytes": 0,
+          "stderr_bytes": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "status": {
+            "code": 0,
+            "success": true
+          },
+          "files": {
+            "PR2FA17.txt": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "SALES REPORT.txt": {
+              "bytes": 583,
+              "sha256": "59ca2412f6b1931d1feb8ae9fce7d98b484c2ef3a6721785c2f059adfc37a534"
+            }
+          }
+        },
+        {
+          "id": "single-record",
+          "domain": "one 60-byte sales record",
+          "equal": true,
+          "stdout_bytes": 0,
+          "stderr_bytes": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "status": {
+            "code": 0,
+            "success": true
+          },
+          "files": {
+            "PR2FA17.txt": {
+              "bytes": 61,
+              "sha256": "28cf8a31dfe24d40870482e20b93e1cbe8fcf0fefb93e27f005f1b54d86c2cdd"
+            },
+            "SALES REPORT.txt": {
+              "bytes": 655,
+              "sha256": "e9590181cb34e99e4ebe379fbf0bb8fbb829ff1fd152cdba7dc5792829714b51"
+            }
+          }
+        },
+        {
+          "id": "duplicate-product-group",
+          "domain": "consecutive equal product IDs and repeated customers",
+          "equal": true,
+          "stdout_bytes": 0,
+          "stderr_bytes": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "status": {
+            "code": 0,
+            "success": true
+          },
+          "files": {
+            "PR2FA17.txt": {
+              "bytes": 183,
+              "sha256": "d65dd5c7ab7351221a72660dc698e4dab914281c309e9426a8d0a77901606980"
+            },
+            "SALES REPORT.txt": {
+              "bytes": 874,
+              "sha256": "67348cb025a4f699c179056ea9e144cb1280a4aa947e8c25066301e13a210dea"
+            }
+          }
+        },
+        {
+          "id": "leading-zero-values",
+          "domain": "zero-padded identifiers, quantity, and cost",
+          "equal": true,
+          "stdout_bytes": 0,
+          "stderr_bytes": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "status": {
+            "code": 0,
+            "success": true
+          },
+          "files": {
+            "PR2FA17.txt": {
+              "bytes": 61,
+              "sha256": "38fefffa0620bdba3ca3bd06027229d6bf40ae1b2e97fd34a88022be1aadda79"
+            },
+            "SALES REPORT.txt": {
+              "bytes": 655,
+              "sha256": "ddf8ae5a3beb6e88b6f9f2cdf78296640f09f21b0963017d3ffb187c40d6cb87"
+            }
+          }
+        },
+        {
+          "id": "numeric-boundaries",
+          "domain": "zero and maximum declared quantity/cost fields",
+          "equal": true,
+          "stdout_bytes": 0,
+          "stderr_bytes": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "status": {
+            "code": 0,
+            "success": true
+          },
+          "files": {
+            "PR2FA17.txt": {
+              "bytes": 122,
+              "sha256": "f680876ab1c8c01b1fd8339a649ec404b0016ac083fecdaf527dcca48dc4ba3c"
+            },
+            "SALES REPORT.txt": {
+              "bytes": 727,
+              "sha256": "be582d8525c6c2a4b08e1918256e7892491a98282bd8a4884e992892f8f96039"
+            }
+          }
+        },
+        {
+          "id": "partial-line-record",
+          "domain": "59-byte line where the declared input record is 60 bytes",
+          "equal": true,
+          "stdout_bytes": 0,
+          "stderr_bytes": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "status": {
+            "code": 0,
+            "success": true
+          },
+          "files": {
+            "PR2FA17.txt": {
+              "bytes": 60,
+              "sha256": "4605e79ac77973d9021dcfa021b171c2518666f4f3181a55ef6731fc00ddc806"
+            },
+            "SALES REPORT.txt": {
+              "bytes": 655,
+              "sha256": "e9590181cb34e99e4ebe379fbf0bb8fbb829ff1fd152cdba7dc5792829714b51"
+            }
+          }
+        },
+        {
+          "id": "missing-input-file",
+          "domain": "PR2FA17.txt absent",
+          "equal": true,
+          "stdout_bytes": 0,
+          "stderr_bytes": 199,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_sha256": "d7deb86d99cc27e65071bd4acfef3ed90ec676f9cd425480ecb6459507e92e8c",
+          "status": {
+            "code": 1,
+            "success": false
+          },
+          "files": {
+            "SALES REPORT.txt": {
+              "bytes": 363,
+              "sha256": "e07057e24615299aba5afed6688b0ddf2a5452aaf86977d5aa4602916d378b83"
+            }
+          }
+        },
+        {
+          "id": "page-44-records",
+          "domain": "44 records around the source page-break threshold",
+          "equal": true,
+          "stdout_bytes": 0,
+          "stderr_bytes": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "status": {
+            "code": 0,
+            "success": true
+          },
+          "files": {
+            "PR2FA17.txt": {
+              "bytes": 2684,
+              "sha256": "2d9a94c3c1b35bd71cafa9fd662471c8604010c73990f91782e07645e5d4a6a8"
+            },
+            "SALES REPORT.txt": {
+              "bytes": 3826,
+              "sha256": "a85fac69c4f5d95fd48289d655afeff487d6de2d09b784b63a7d28a61014ce56"
+            }
+          }
+        },
+        {
+          "id": "page-45-records",
+          "domain": "45 records around the source page-break threshold",
+          "equal": true,
+          "stdout_bytes": 0,
+          "stderr_bytes": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "status": {
+            "code": 0,
+            "success": true
+          },
+          "files": {
+            "PR2FA17.txt": {
+              "bytes": 2745,
+              "sha256": "a786a547ec75eee5a48ec8405c35b16d30c373a8c8381155469cdcbc58781453"
+            },
+            "SALES REPORT.txt": {
+              "bytes": 4332,
+              "sha256": "5e07d1f2ab2ec2dd7891e5c07c1cfe3a140f61969db66e7ae3ab3de66dbc0c7f"
+            }
+          }
+        },
+        {
+          "id": "page-46-records",
+          "domain": "46 records around the source page-break threshold",
+          "equal": true,
+          "stdout_bytes": 0,
+          "stderr_bytes": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "status": {
+            "code": 0,
+            "success": true
+          },
+          "files": {
+            "PR2FA17.txt": {
+              "bytes": 2806,
+              "sha256": "b60a793b2396288c85990e51adf104e74da80c27339588a4840e4fce9575f1f3"
+            },
+            "SALES REPORT.txt": {
+              "bytes": 4404,
+              "sha256": "ba2572fce95958152570bcf55b17fef56f13926a0184da5dbfa0e384a6ae0b17"
+            }
+          }
+        },
+        {
+          "id": "total-value-truncation",
+          "domain": "11 maximum-value records in one group overflow the 9-digit cents total destination",
+          "equal": true,
+          "stdout_bytes": 0,
+          "stderr_bytes": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "status": {
+            "code": 0,
+            "success": true
+          },
+          "files": {
+            "PR2FA17.txt": {
+              "bytes": 671,
+              "sha256": "ce2161f53110e85fb1368a8140e31a4e747016f2a73289567381ddff606d60b0"
+            },
+            "SALES REPORT.txt": {
+              "bytes": 1375,
+              "sha256": "e7fa5bf7025fb6606da57e8240aa47cbbd73581fd3a15082668660e59bd5f5f5"
+            }
+          }
+        },
+        {
+          "id": "total-quantity-truncation",
+          "domain": "1003 records of quantity 999 overflow the 6-digit group quantity destination; repeated pages",
+          "equal": true,
+          "stdout_bytes": 0,
+          "stderr_bytes": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "status": {
+            "code": 0,
+            "success": true
+          },
+          "files": {
+            "PR2FA17.txt": {
+              "bytes": 61183,
+              "sha256": "618b0579ed2510fbacb7f2b78efa3ee744ee182f98cf16791ba6c4e04a2e3749"
+            },
+            "SALES REPORT.txt": {
+              "bytes": 82347,
+              "sha256": "b0fe1ef4d051c3e1d884df9ca6acb03ca6f2a9c6059ba63f6b769fbe84c3f640"
+            }
+          }
+        },
+        {
+          "id": "edited-quantity-zeroes",
+          "domain": "group quantity 100001 retains internal zeroes in PIC ZZZ999 and final comma editing",
+          "equal": true,
+          "stdout_bytes": 0,
+          "stderr_bytes": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "status": {
+            "code": 0,
+            "success": true
+          },
+          "files": {
+            "PR2FA17.txt": {
+              "bytes": 6161,
+              "sha256": "e5b9ace7ade53761bacbc1ac6113463487cbeb0c4b14e46284b5e990e04ebe81"
+            },
+            "SALES REPORT.txt": {
+              "bytes": 8723,
+              "sha256": "b7d08c971871665badd8e4cb6acef10126cb1c0512850a0518d9b4fa923861c8"
+            }
+          }
+        },
+        {
+          "id": "generated-group-transitions",
+          "domain": "seed 20261106: 200 records with repeated and singleton groups, zero-padded identifiers, bounded decimal fields and page transitions",
+          "equal": true,
+          "stdout_bytes": 0,
+          "stderr_bytes": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "status": {
+            "code": 0,
+            "success": true
+          },
+          "files": {
+            "PR2FA17.txt": {
+              "bytes": 12200,
+              "sha256": "1983ef6bb07f80be9e1484634a5154aa74d1f5bc2009216f9965452d528aeb67"
+            },
+            "SALES REPORT.txt": {
+              "bytes": 18819,
+              "sha256": "af9b46223ca97b326ffffad2972c88ccc651a469ad88be966a8cf7c18b5ca88a"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "case": "formatter",
+      "mode": "release",
+      "status": "byte_exact",
+      "source_revision": "360be06d084d6fca3903c5b522537f5413c44977",
+      "sources": [
+        {
+          "root": "repository",
+          "path": "drivers/formatter.cob",
+          "sha256": "ce64c272c39a1b0d5927386828708beeca278249194c7832acbdca549fa8c037"
+        },
+        {
+          "root": "external",
+          "path": "DGFIPTools_Calculer-Moyenne-Cobol/format-number.cob",
+          "sha256": "106979a2e188f5a2b57e122a78eff1c065ca3fb61bd0b1b96e1ae88c836adc4b"
+        }
+      ],
+      "manifest_sha256": "5b51231dce20ae68a7864b651f7a83cba5048a23599d2e544fa417422d233e92",
+      "baseline_sha256": "31390cc3c0403dee202fcf53e75776dcbc2241890089e63ad2d1546a84b7c9c4",
+      "rust_binary_sha256": "dcda67e0e9196299148425a57f0b4f6274715a46a38ff1d8e158a897e19bffda",
+      "scenarios": [
+        {
+          "id": "all-valid-twice",
+          "domain": "Exhaustive 10000 valid PIC 99V99 values, ascending then descending; 20000 calls; all five returned bytes",
+          "equal": true,
+          "stdout_bytes": 100000,
+          "stderr_bytes": 0,
+          "stdout_sha256": "f56c03e3838854028cae5ebff7c857ad2e6132fa481850306ab20f20dc09a7c0",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "status": {
+            "code": 0,
+            "success": true
+          },
+          "files": {}
+        }
+      ]
+    },
+    {
+      "case": "fxsort",
+      "mode": "release",
+      "status": "byte_exact",
+      "source_revision": "12626aa45dd244218c18d67c35ed159a958fadeb + two identification metadata terminators and modification notice (docs/fxsort-admission.md)",
+      "sources": [
+        {
+          "root": "external",
+          "path": "candidates/adapted/fxsort.cbl",
+          "sha256": "5662b48475500d0404ceb7fc0065fdab36cf9abadf7c810a7d8e49523909d965"
+        }
+      ],
+      "manifest_sha256": "2faf751c9b89f33df8ddff46cd4e526befdeb9bad33e40297bf3e290d5226603",
+      "baseline_sha256": "abab44c0ac1af7f747049caa1113d11c574de26d6e1a95d80063f8f42a601ce0",
+      "rust_binary_sha256": "dcda67e0e9196299148425a57f0b4f6274715a46a38ff1d8e158a897e19bffda",
+      "scenarios": [
+        {
+          "id": "empty-inputs",
+          "domain": "all three inputs empty",
+          "equal": true,
+          "stdout_bytes": 50,
+          "stderr_bytes": 0,
+          "stdout_sha256": "fd6cabf63b7b4b1936e0e39824404acadc2c6ab8090c94e1d473ca4e33f447d3",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "status": {
+            "code": 0,
+            "success": true
+          },
+          "files": {
+            "FXBOSS": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "FXJHS": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "FXLSTMRG": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "FXMXR": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "FXSORTED": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        },
+        {
+          "id": "single-record",
+          "domain": "one 80-byte record in one input",
+          "equal": true,
+          "stdout_bytes": 50,
+          "stderr_bytes": 0,
+          "stdout_sha256": "fd6cabf63b7b4b1936e0e39824404acadc2c6ab8090c94e1d473ca4e33f447d3",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "status": {
+            "code": 0,
+            "success": true
+          },
+          "files": {
+            "FXBOSS": {
+              "bytes": 80,
+              "sha256": "876644d2330a977aa3717f0646d265784c1940c86cb74e8819ca4a32724dcfab"
+            },
+            "FXJHS": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "FXLSTMRG": {
+              "bytes": 80,
+              "sha256": "876644d2330a977aa3717f0646d265784c1940c86cb74e8819ca4a32724dcfab"
+            },
+            "FXMXR": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "FXSORTED": {
+              "bytes": 80,
+              "sha256": "876644d2330a977aa3717f0646d265784c1940c86cb74e8819ca4a32724dcfab"
+            }
+          }
+        },
+        {
+          "id": "duplicate-keys-and-ties",
+          "domain": "duplicate names and equal prices across input files",
+          "equal": true,
+          "stdout_bytes": 50,
+          "stderr_bytes": 0,
+          "stdout_sha256": "fd6cabf63b7b4b1936e0e39824404acadc2c6ab8090c94e1d473ca4e33f447d3",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "status": {
+            "code": 0,
+            "success": true
+          },
+          "files": {
+            "FXBOSS": {
+              "bytes": 160,
+              "sha256": "4a1ba723ee128e020ce02a5bd9668e06eaa69e6ec9cbf6e2ddcb9af59993cff2"
+            },
+            "FXJHS": {
+              "bytes": 80,
+              "sha256": "363157ce88b56676fd51f95fc8a471fd355540bb4e24b944a3805d8a96fcd9de"
+            },
+            "FXLSTMRG": {
+              "bytes": 400,
+              "sha256": "bed0ab221f8abfa57ee7be1ffc7cecefb41c4641de38220ec4984c0bcf8da749"
+            },
+            "FXMXR": {
+              "bytes": 160,
+              "sha256": "4a1ba723ee128e020ce02a5bd9668e06eaa69e6ec9cbf6e2ddcb9af59993cff2"
+            },
+            "FXSORTED": {
+              "bytes": 400,
+              "sha256": "c2f53bfc919a6493659f9aab7777e30d9c430d113ef1d9514e260342f7d9d0fa"
+            }
+          }
+        },
+        {
+          "id": "leading-zero-and-small-values",
+          "domain": "leading-zero names and minimum cent values",
+          "equal": true,
+          "stdout_bytes": 50,
+          "stderr_bytes": 0,
+          "stdout_sha256": "fd6cabf63b7b4b1936e0e39824404acadc2c6ab8090c94e1d473ca4e33f447d3",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "status": {
+            "code": 0,
+            "success": true
+          },
+          "files": {
+            "FXBOSS": {
+              "bytes": 80,
+              "sha256": "277a89cc8042a441dd2a21bb9e4552f1fc5ef395ddc2c14c6259489f59b7f37b"
+            },
+            "FXJHS": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "FXLSTMRG": {
+              "bytes": 160,
+              "sha256": "963c15ddfde9302c4337d475430b8a069055d869a88b3f98f84c39162b441605"
+            },
+            "FXMXR": {
+              "bytes": 80,
+              "sha256": "2eb10b904ae57216e95b7a8e319febc2e64790d8fa7ec954c69b7e5bc412ea75"
+            },
+            "FXSORTED": {
+              "bytes": 160,
+              "sha256": "658842b83319a10adcf716ba550fa3907aa5ac4245874a9a9d9745ac714ea12f"
+            }
+          }
+        },
+        {
+          "id": "character-key-order",
+          "domain": "raw character price keys whose byte order differs from decimal interpretation",
+          "equal": true,
+          "stdout_bytes": 50,
+          "stderr_bytes": 0,
+          "stdout_sha256": "fd6cabf63b7b4b1936e0e39824404acadc2c6ab8090c94e1d473ca4e33f447d3",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "status": {
+            "code": 0,
+            "success": true
+          },
+          "files": {
+            "FXBOSS": {
+              "bytes": 80,
+              "sha256": "2a5e105e555733b2326bf175d7ab01e5a23f9f92174afb0f64a756a1c238d479"
+            },
+            "FXJHS": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "FXLSTMRG": {
+              "bytes": 160,
+              "sha256": "e5898b4db87e3b1fa599fa302b5962b898cc54d7e381911131dc77e6095189ef"
+            },
+            "FXMXR": {
+              "bytes": 80,
+              "sha256": "0917deb781a101f1ab5a967ee74e55fa168193f89e29d3b721ba7c5e7b111006"
+            },
+            "FXSORTED": {
+              "bytes": 160,
+              "sha256": "acafb7ab8d7158c8d3be0baafe42dd0852def1c7819a24c5fb0de0a347f28aa8"
+            }
+          }
+        },
+        {
+          "id": "currency-boundaries",
+          "domain": "zero, cent, and maximum 8-digit integer currency",
+          "equal": true,
+          "stdout_bytes": 50,
+          "stderr_bytes": 0,
+          "stdout_sha256": "fd6cabf63b7b4b1936e0e39824404acadc2c6ab8090c94e1d473ca4e33f447d3",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "status": {
+            "code": 0,
+            "success": true
+          },
+          "files": {
+            "FXBOSS": {
+              "bytes": 80,
+              "sha256": "03a1ea5ff16756b7abf9f598f7a51e4c0e04c66f00b9584e02aabb4ce18fc44a"
+            },
+            "FXJHS": {
+              "bytes": 160,
+              "sha256": "39827a3c2452d5744eb742f37067b5de0b49e9bd5590c7ecfdd8d2c8c45a203a"
+            },
+            "FXLSTMRG": {
+              "bytes": 240,
+              "sha256": "cd160e251d51972613e39ee45418704022d8220c5df9f6210f979b671ae7fc9f"
+            },
+            "FXMXR": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "FXSORTED": {
+              "bytes": 240,
+              "sha256": "cb7de13210f9f3804cf2ebe936ed0c37f7236214a7202cc8e694ac002ae0dbe8"
+            }
+          }
+        },
+        {
+          "id": "partial-fixed-record",
+          "domain": "one 80-byte record followed by a 79-byte partial record",
+          "equal": true,
+          "stdout_bytes": 50,
+          "stderr_bytes": 0,
+          "stdout_sha256": "fd6cabf63b7b4b1936e0e39824404acadc2c6ab8090c94e1d473ca4e33f447d3",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "status": {
+            "code": 0,
+            "success": true
+          },
+          "files": {
+            "FXBOSS": {
+              "bytes": 159,
+              "sha256": "18d23a11ce613e98e12d22d357a7fedc1b8af0a50fc68542fbc076250f02e710"
+            },
+            "FXJHS": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "FXLSTMRG": {
+              "bytes": 160,
+              "sha256": "1b062d560295553951ca8a7e8e7ec18b890ece9ade9b9153565b7219e9608543"
+            },
+            "FXMXR": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "FXSORTED": {
+              "bytes": 160,
+              "sha256": "1b062d560295553951ca8a7e8e7ec18b890ece9ade9b9153565b7219e9608543"
+            }
+          }
+        },
+        {
+          "id": "one-byte-record",
+          "domain": "one-byte fixed record; verify exact space padding without stale data",
+          "equal": true,
+          "stdout_bytes": 50,
+          "stderr_bytes": 0,
+          "stdout_sha256": "fd6cabf63b7b4b1936e0e39824404acadc2c6ab8090c94e1d473ca4e33f447d3",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "status": {
+            "code": 0,
+            "success": true
+          },
+          "files": {
+            "FXBOSS": {
+              "bytes": 1,
+              "sha256": "559aead08264d5795d3909718cdd05abd49572e84fe55590eef31a88a08fdffd"
+            },
+            "FXJHS": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "FXLSTMRG": {
+              "bytes": 80,
+              "sha256": "980daafc0778670f09384f45481f61e19e5edc10be74c9073bfee9c59e7d16e2"
+            },
+            "FXMXR": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "FXSORTED": {
+              "bytes": 80,
+              "sha256": "980daafc0778670f09384f45481f61e19e5edc10be74c9073bfee9c59e7d16e2"
+            }
+          }
+        },
+        {
+          "id": "missing-input-file",
+          "domain": "required FXJHS input file absent",
+          "equal": true,
+          "stdout_bytes": 50,
+          "stderr_bytes": 0,
+          "stdout_sha256": "fd6cabf63b7b4b1936e0e39824404acadc2c6ab8090c94e1d473ca4e33f447d3",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "status": {
+            "code": 0,
+            "success": true
+          },
+          "files": {
+            "FXBOSS": {
+              "bytes": 80,
+              "sha256": "03788cec477479c98abd1cb01ab71da55a9c5599952502094855a872034f0c71"
+            },
+            "FXLSTMRG": {
+              "bytes": 80,
+              "sha256": "03788cec477479c98abd1cb01ab71da55a9c5599952502094855a872034f0c71"
+            },
+            "FXMXR": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "FXSORTED": {
+              "bytes": 80,
+              "sha256": "03788cec477479c98abd1cb01ab71da55a9c5599952502094855a872034f0c71"
+            }
+          }
+        },
+        {
+          "id": "generated-three-way-merge",
+          "domain": "seed 20261106: 150 records; each input sorted by raw name; ties, punctuation, case and distinguishable payloads",
+          "equal": true,
+          "stdout_bytes": 50,
+          "stderr_bytes": 0,
+          "stdout_sha256": "fd6cabf63b7b4b1936e0e39824404acadc2c6ab8090c94e1d473ca4e33f447d3",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "status": {
+            "code": 0,
+            "success": true
+          },
+          "files": {
+            "FXBOSS": {
+              "bytes": 4000,
+              "sha256": "b7f520d197d198680c5e9a3617907116c8f831b6addfc28dad5dc740ee45d7b2"
+            },
+            "FXJHS": {
+              "bytes": 4000,
+              "sha256": "e79d97538d4589c4accf160f7a58fe6dbba097c5b817210064cac522a76ff3d3"
+            },
+            "FXLSTMRG": {
+              "bytes": 12000,
+              "sha256": "cb38221aa25334b34687634e1562864922869dab834dcdbbcabf281d9e65777a"
+            },
+            "FXMXR": {
+              "bytes": 4000,
+              "sha256": "fd719d781da4cfe6ae6afb985f39bf54545f7e465f01068a81c6f6615ffb2c62"
+            },
+            "FXSORTED": {
+              "bytes": 12000,
+              "sha256": "46579d339ebc34353ff758c5d17b6b5a075a419506129fde304c66e83279a2fd"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "case": "sales",
+      "mode": "release",
+      "status": "byte_exact",
+      "source_revision": "ece4ed7efcbcc9a232318956cf9765d036a5b18f",
+      "sources": [
+        {
+          "root": "external",
+          "path": "tylerbro93_COBOL-SALES-INVENTORY-REPORT-DEMONSTRATION/project2.cbl",
+          "sha256": "43493737151f430955ad1b83e57929279652347219b25d2659053218b87b302c"
+        }
+      ],
+      "manifest_sha256": "2f9b5875d80c48736370853189eea9e1161fab4ccf8ed86072418a3d68719112",
+      "baseline_sha256": "83d3ef9fb1ef5c55dc793046284e6cd3f4f97bea5c9bc85cfbdffc3516e0eb62",
+      "rust_binary_sha256": "dcda67e0e9196299148425a57f0b4f6274715a46a38ff1d8e158a897e19bffda",
+      "scenarios": [
+        {
+          "id": "empty-input",
+          "domain": "empty line-sequential input",
+          "equal": true,
+          "stdout_bytes": 0,
+          "stderr_bytes": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "status": {
+            "code": 0,
+            "success": true
+          },
+          "files": {
+            "PR2FA17.txt": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "SALES REPORT.txt": {
+              "bytes": 583,
+              "sha256": "59ca2412f6b1931d1feb8ae9fce7d98b484c2ef3a6721785c2f059adfc37a534"
+            }
+          }
+        },
+        {
+          "id": "single-record",
+          "domain": "one 60-byte sales record",
+          "equal": true,
+          "stdout_bytes": 0,
+          "stderr_bytes": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "status": {
+            "code": 0,
+            "success": true
+          },
+          "files": {
+            "PR2FA17.txt": {
+              "bytes": 61,
+              "sha256": "28cf8a31dfe24d40870482e20b93e1cbe8fcf0fefb93e27f005f1b54d86c2cdd"
+            },
+            "SALES REPORT.txt": {
+              "bytes": 655,
+              "sha256": "e9590181cb34e99e4ebe379fbf0bb8fbb829ff1fd152cdba7dc5792829714b51"
+            }
+          }
+        },
+        {
+          "id": "duplicate-product-group",
+          "domain": "consecutive equal product IDs and repeated customers",
+          "equal": true,
+          "stdout_bytes": 0,
+          "stderr_bytes": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "status": {
+            "code": 0,
+            "success": true
+          },
+          "files": {
+            "PR2FA17.txt": {
+              "bytes": 183,
+              "sha256": "d65dd5c7ab7351221a72660dc698e4dab914281c309e9426a8d0a77901606980"
+            },
+            "SALES REPORT.txt": {
+              "bytes": 874,
+              "sha256": "67348cb025a4f699c179056ea9e144cb1280a4aa947e8c25066301e13a210dea"
+            }
+          }
+        },
+        {
+          "id": "leading-zero-values",
+          "domain": "zero-padded identifiers, quantity, and cost",
+          "equal": true,
+          "stdout_bytes": 0,
+          "stderr_bytes": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "status": {
+            "code": 0,
+            "success": true
+          },
+          "files": {
+            "PR2FA17.txt": {
+              "bytes": 61,
+              "sha256": "38fefffa0620bdba3ca3bd06027229d6bf40ae1b2e97fd34a88022be1aadda79"
+            },
+            "SALES REPORT.txt": {
+              "bytes": 655,
+              "sha256": "ddf8ae5a3beb6e88b6f9f2cdf78296640f09f21b0963017d3ffb187c40d6cb87"
+            }
+          }
+        },
+        {
+          "id": "numeric-boundaries",
+          "domain": "zero and maximum declared quantity/cost fields",
+          "equal": true,
+          "stdout_bytes": 0,
+          "stderr_bytes": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "status": {
+            "code": 0,
+            "success": true
+          },
+          "files": {
+            "PR2FA17.txt": {
+              "bytes": 122,
+              "sha256": "f680876ab1c8c01b1fd8339a649ec404b0016ac083fecdaf527dcca48dc4ba3c"
+            },
+            "SALES REPORT.txt": {
+              "bytes": 727,
+              "sha256": "be582d8525c6c2a4b08e1918256e7892491a98282bd8a4884e992892f8f96039"
+            }
+          }
+        },
+        {
+          "id": "partial-line-record",
+          "domain": "59-byte line where the declared input record is 60 bytes",
+          "equal": true,
+          "stdout_bytes": 0,
+          "stderr_bytes": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "status": {
+            "code": 0,
+            "success": true
+          },
+          "files": {
+            "PR2FA17.txt": {
+              "bytes": 60,
+              "sha256": "4605e79ac77973d9021dcfa021b171c2518666f4f3181a55ef6731fc00ddc806"
+            },
+            "SALES REPORT.txt": {
+              "bytes": 655,
+              "sha256": "e9590181cb34e99e4ebe379fbf0bb8fbb829ff1fd152cdba7dc5792829714b51"
+            }
+          }
+        },
+        {
+          "id": "missing-input-file",
+          "domain": "PR2FA17.txt absent",
+          "equal": true,
+          "stdout_bytes": 0,
+          "stderr_bytes": 199,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_sha256": "d7deb86d99cc27e65071bd4acfef3ed90ec676f9cd425480ecb6459507e92e8c",
+          "status": {
+            "code": 1,
+            "success": false
+          },
+          "files": {
+            "SALES REPORT.txt": {
+              "bytes": 363,
+              "sha256": "e07057e24615299aba5afed6688b0ddf2a5452aaf86977d5aa4602916d378b83"
+            }
+          }
+        },
+        {
+          "id": "page-44-records",
+          "domain": "44 records around the source page-break threshold",
+          "equal": true,
+          "stdout_bytes": 0,
+          "stderr_bytes": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "status": {
+            "code": 0,
+            "success": true
+          },
+          "files": {
+            "PR2FA17.txt": {
+              "bytes": 2684,
+              "sha256": "2d9a94c3c1b35bd71cafa9fd662471c8604010c73990f91782e07645e5d4a6a8"
+            },
+            "SALES REPORT.txt": {
+              "bytes": 3826,
+              "sha256": "a85fac69c4f5d95fd48289d655afeff487d6de2d09b784b63a7d28a61014ce56"
+            }
+          }
+        },
+        {
+          "id": "page-45-records",
+          "domain": "45 records around the source page-break threshold",
+          "equal": true,
+          "stdout_bytes": 0,
+          "stderr_bytes": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "status": {
+            "code": 0,
+            "success": true
+          },
+          "files": {
+            "PR2FA17.txt": {
+              "bytes": 2745,
+              "sha256": "a786a547ec75eee5a48ec8405c35b16d30c373a8c8381155469cdcbc58781453"
+            },
+            "SALES REPORT.txt": {
+              "bytes": 4332,
+              "sha256": "5e07d1f2ab2ec2dd7891e5c07c1cfe3a140f61969db66e7ae3ab3de66dbc0c7f"
+            }
+          }
+        },
+        {
+          "id": "page-46-records",
+          "domain": "46 records around the source page-break threshold",
+          "equal": true,
+          "stdout_bytes": 0,
+          "stderr_bytes": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "status": {
+            "code": 0,
+            "success": true
+          },
+          "files": {
+            "PR2FA17.txt": {
+              "bytes": 2806,
+              "sha256": "b60a793b2396288c85990e51adf104e74da80c27339588a4840e4fce9575f1f3"
+            },
+            "SALES REPORT.txt": {
+              "bytes": 4404,
+              "sha256": "ba2572fce95958152570bcf55b17fef56f13926a0184da5dbfa0e384a6ae0b17"
+            }
+          }
+        },
+        {
+          "id": "total-value-truncation",
+          "domain": "11 maximum-value records in one group overflow the 9-digit cents total destination",
+          "equal": true,
+          "stdout_bytes": 0,
+          "stderr_bytes": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "status": {
+            "code": 0,
+            "success": true
+          },
+          "files": {
+            "PR2FA17.txt": {
+              "bytes": 671,
+              "sha256": "ce2161f53110e85fb1368a8140e31a4e747016f2a73289567381ddff606d60b0"
+            },
+            "SALES REPORT.txt": {
+              "bytes": 1375,
+              "sha256": "e7fa5bf7025fb6606da57e8240aa47cbbd73581fd3a15082668660e59bd5f5f5"
+            }
+          }
+        },
+        {
+          "id": "total-quantity-truncation",
+          "domain": "1003 records of quantity 999 overflow the 6-digit group quantity destination; repeated pages",
+          "equal": true,
+          "stdout_bytes": 0,
+          "stderr_bytes": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "status": {
+            "code": 0,
+            "success": true
+          },
+          "files": {
+            "PR2FA17.txt": {
+              "bytes": 61183,
+              "sha256": "618b0579ed2510fbacb7f2b78efa3ee744ee182f98cf16791ba6c4e04a2e3749"
+            },
+            "SALES REPORT.txt": {
+              "bytes": 82347,
+              "sha256": "b0fe1ef4d051c3e1d884df9ca6acb03ca6f2a9c6059ba63f6b769fbe84c3f640"
+            }
+          }
+        },
+        {
+          "id": "edited-quantity-zeroes",
+          "domain": "group quantity 100001 retains internal zeroes in PIC ZZZ999 and final comma editing",
+          "equal": true,
+          "stdout_bytes": 0,
+          "stderr_bytes": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "status": {
+            "code": 0,
+            "success": true
+          },
+          "files": {
+            "PR2FA17.txt": {
+              "bytes": 6161,
+              "sha256": "e5b9ace7ade53761bacbc1ac6113463487cbeb0c4b14e46284b5e990e04ebe81"
+            },
+            "SALES REPORT.txt": {
+              "bytes": 8723,
+              "sha256": "b7d08c971871665badd8e4cb6acef10126cb1c0512850a0518d9b4fa923861c8"
+            }
+          }
+        },
+        {
+          "id": "generated-group-transitions",
+          "domain": "seed 20261106: 200 records with repeated and singleton groups, zero-padded identifiers, bounded decimal fields and page transitions",
+          "equal": true,
+          "stdout_bytes": 0,
+          "stderr_bytes": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "status": {
+            "code": 0,
+            "success": true
+          },
+          "files": {
+            "PR2FA17.txt": {
+              "bytes": 12200,
+              "sha256": "1983ef6bb07f80be9e1484634a5154aa74d1f5bc2009216f9965452d528aeb67"
+            },
+            "SALES REPORT.txt": {
+              "bytes": 18819,
+              "sha256": "af9b46223ca97b326ffffad2972c88ccc651a469ad88be966a8cf7c18b5ca88a"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

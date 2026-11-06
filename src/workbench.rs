@@ -122,6 +122,33 @@ fn within(root: &Path, relative: &str) -> Result<PathBuf> {
     Ok(path)
 }
 
+fn profile_paths(
+    root: &Path,
+    dir: &Path,
+    paths: &mut std::collections::BTreeSet<String>,
+) -> Result<()> {
+    for entry in fs::read_dir(dir)? {
+        let path = entry?.path();
+        let metadata = fs::symlink_metadata(&path)?;
+        if metadata.file_type().is_symlink() || !canonical(&path)?.starts_with(root) {
+            return Err("profile contains an unsafe link".into());
+        }
+        if metadata.is_dir() {
+            profile_paths(root, &path, paths)?;
+        } else if metadata.is_file() {
+            paths.insert(
+                path.strip_prefix(root)?
+                    .to_str()
+                    .ok_or("profile filename is not UTF-8")?
+                    .replace('\\', "/"),
+            );
+        } else {
+            return Err("profile contains a non-regular file".into());
+        }
+    }
+    Ok(())
+}
+
 fn load(id: &str) -> Result<(Case, Vec<u8>)> {
     identifier(id)?;
     let bytes = fs::read(format!("cases/{id}.json"))?;
@@ -137,7 +164,7 @@ pub fn assess(id: &str) -> Result<bool> {
     println!(
         "{}",
         serde_json::to_string_pretty(
-            &serde_json::json!({"schema_version":1,"case":case.id,"admission":case.admission,"reviewed":case.reviewed,"source_revision":case.source_revision,"blockers":case.blockers,"semantics":case.semantics,"scenario_count":case.scenarios.len()})
+            &serde_json::json!({"schema_version":1,"case":case.id,"admission":case.admission,"reviewed":case.reviewed,"source_revision":case.source_revision,"source_files":case.sources,"blockers":case.blockers,"semantic_risks":case.semantics,"build_requirements":{"reference":"pinned native Windows GnuCOBOL 3.2 and compatible C compiler/runtime","arguments":case.build_args,"rust":"rust-toolchain.toml and Cargo.lock","input_fixtures":"initial_hex in each scenario","file_observations":"all regular files before and after job"},"scenario_count":case.scenarios.len()})
         )?
     );
     Ok(case.admission == "admitted")
@@ -167,6 +194,9 @@ fn initial(scenario: &Scenario) -> Result<BTreeMap<String, Vec<u8>>> {
 fn restore(job: &Path, files: &BTreeMap<String, Vec<u8>>) -> Result<()> {
     // `job` is exclusively owned by this invocation's lock, beneath a validated run root.
     if job.exists() {
+        if canonical(job)? != job {
+            return Err("job path is redirected through a filesystem link".into());
+        }
         capture::snapshot(job)?; // Reject symlinks before removing regenerable run state.
         fs::remove_dir_all(job)?;
     }
@@ -203,7 +233,9 @@ pub fn execute(args: &[String]) -> Result<bool> {
     let operation = args.first().ok_or("missing operation")?;
     if operation == "verify" && args.get(1).map(String::as_str) == Some("--all") {
         let ids: Vec<String> = serde_json::from_slice(&fs::read("cases/required.json")?)?;
-        if ids.is_empty() {
+        if ids.is_empty()
+            || ids.iter().collect::<std::collections::BTreeSet<_>>().len() != ids.len()
+        {
             return Err("required case registry is empty".into());
         }
         let mut all = true;
@@ -227,7 +259,10 @@ pub fn execute(args: &[String]) -> Result<bool> {
         return Ok(all);
     }
     let (case, manifest) = load(args.get(1).ok_or("missing case")?)?;
-    if case.admission != "admitted" || (operation == "verify" && !case.reviewed) {
+    if case.admission != "admitted"
+        || !case.blockers.is_empty()
+        || (operation == "verify" && !case.reviewed)
+    {
         println!(
             "{}",
             serde_json::json!({"schema_version":1,"case":case.id,"status":"blocked","blockers":case.blockers})
@@ -259,6 +294,11 @@ pub fn execute(args: &[String]) -> Result<bool> {
     let root = canonical(&profile.root)?;
     if profile.files.is_empty() || !profile.files.contains_key(&profile.cobc) {
         return Err("profile does not pin its compiler".into());
+    }
+    let mut paths = std::collections::BTreeSet::new();
+    profile_paths(&root, &root, &mut paths)?;
+    if paths != profile.files.keys().cloned().collect() {
+        return Err("profile file set changed (missing or unpinned artifact)".into());
     }
     for (name, expected) in &profile.files {
         let path = within(&root, name)?;
@@ -295,6 +335,9 @@ pub fn execute(args: &[String]) -> Result<bool> {
     let runs = canonical(runs)?;
     let case_dir = runs.join(&case.id);
     fs::create_dir_all(&case_dir)?;
+    if canonical(&case_dir)? != case_dir {
+        return Err("case directory is redirected through a filesystem link".into());
+    }
     let lock_path = case_dir.join("job.lock");
     OpenOptions::new()
         .write(true)
@@ -394,8 +437,10 @@ pub fn execute(args: &[String]) -> Result<bool> {
         OpenOptions::new()
             .write(true)
             .create_new(true)
-            .open(target)?
+            .open(&target)?
             .write_all(&serde_json::to_vec_pretty(&baseline)?)?;
+        OpenOptions::new().write(true).create_new(true).open(target.with_extension("md"))?.write_all(
+            format!("# Reference baseline: {}\n\nStatus: {}. Profile: `{}`.\n\n{} scenarios, {} runs each. The JSON retains every raw byte and process status. Capture equality covers all regular-file bytes before and after each job.\n",case.id,if stable {"stable"} else {"variable; certification blocked"},profile.id,case.scenarios.len(),case.repetitions).as_bytes())?;
         println!(
             "{}",
             serde_json::json!({"schema_version":1,"case":case.id,"status":if stable {"stable_baseline"} else {"variable_reference"},"repetitions":case.repetitions,"scenarios":case.scenarios.len()})
@@ -456,6 +501,35 @@ pub fn execute(args: &[String]) -> Result<bool> {
         .create_new(true)
         .open(&report_path)?
         .write_all(&serde_json::to_vec_pretty(&result)?)?;
+    let mut markdown = format!(
+        "# Verification: {}\n\nStatus: {}. Profile: `{}`.\n\nScope: declared corpus and input domain only. Baseline SHA-256: `{}`.\n",
+        case.id,
+        if pass { "byte-exact" } else { "mismatch" },
+        profile.id,
+        digest(&baseline_bytes)
+    );
+    for scenario in result["scenarios"]
+        .as_array()
+        .ok_or("missing scenario reports")?
+    {
+        markdown.push_str(&format!(
+            "\n## {}\n\n{}\n\nEqual: {}.\n",
+            scenario["scenario"].as_str().unwrap_or(""),
+            scenario["domain"].as_str().unwrap_or(""),
+            scenario["comparison"]["equal"]
+        ));
+        for difference in scenario["comparison"]["differences"]
+            .as_array()
+            .ok_or("missing comparisons")?
+        {
+            markdown.push_str(&format!("\n- `{}`: expected {} bytes; actual {} bytes; first offset {}; expected hex `{}`; actual hex `{}`.\n",difference["artifact"].as_str().unwrap_or(""),difference["expected_len"],difference["actual_len"],difference["first_diff_offset"],difference["expected_context_hex"].as_str().unwrap_or(""),difference["actual_context_hex"].as_str().unwrap_or("")));
+        }
+    }
+    OpenOptions::new()
+        .write(true)
+        .create_new(true)
+        .open(report_path.with_extension("md"))?
+        .write_all(markdown.as_bytes())?;
     println!(
         "{}",
         serde_json::json!({"schema_version":1,"case":case.id,"status":result["status"],"scenario_count":case.scenarios.len(),"profile":profile.id})
@@ -466,6 +540,8 @@ pub fn execute(args: &[String]) -> Result<bool> {
 pub fn port(args: &[String]) -> Result<i32> {
     match args.first().map(String::as_str) {
         Some("formatter") if args.len() == 1 => crate::formatter::run(),
+        Some("sales") if args.len() == 1 => crate::sales::run(),
+        Some("fxsort") if args.len() == 1 => crate::fxsort::run(),
         _ => Err("unknown or unreviewed port".into()),
     }
 }

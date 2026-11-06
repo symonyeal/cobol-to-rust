@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "defect": "Formatter comma byte replaced with semicolon temporarily; production source restored after this test",
+  "verification_exit_code": 1,
+  "baseline_sha256": "31390cc3c0403dee202fcf53e75776dcbc2241890089e63ad2d1546a84b7c9c4",
+  "baseline_unchanged": true,
+  "differences": [
+    {
+      "actual_context_hex": "20 30 3b 30 30 20 30 3b 30 31",
+      "actual_len": 100000,
+      "artifact": "stdout",
+      "expected_context_hex": "20 30 2c 30 30 20 30 2c 30 31",
+      "expected_len": 100000,
+      "first_diff_offset": 2
+    }
+  ]
+}

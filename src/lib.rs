@@ -1,6 +1,8 @@
 pub mod capture;
 pub mod formatter;
+pub mod fxsort;
 pub mod inventory;
+pub mod sales;
 pub mod workbench;
 
 use sha2::{Digest, Sha256};

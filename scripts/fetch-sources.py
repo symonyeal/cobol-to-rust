@@ -15,7 +15,7 @@ def fetch(url: str) -> bytes:
 
 def safe_parts(value: str) -> tuple[str, ...]:
     parts = PurePosixPath(value).parts
-    if not parts or any(part in ("", ".", "..") for part in parts):
+    if not parts or PurePosixPath(value).is_absolute() or any(c in value for c in ("\\", ":")) or any(part in ("", ".", "..") for part in parts):
         raise ValueError(f"unsafe relative path: {value}")
     return parts
 
@@ -58,4 +58,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

@@ -14,3 +14,28 @@ jobs:
       - run: cargo fmt --check
       - run: cargo clippy --locked --all-targets -- -D warnings
       - run: cargo test --locked
+      - run: python scripts/generate-corpus.py --check
+  live-reference:
+    name: Pinned Windows reference and debug/release parity
+    needs: fixture-checks
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@1.99.1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - run: python scripts/provision-reference.py --reference-env external/reference
+      - run: python scripts/fetch-sources.py external/sources
+      - run: python scripts/prepare-fxsort.py external/sources
+      - run: python scripts/check-live.py --create-baselines --profile external/reference/profile.json --sources external/sources --runs runs --label ci
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: live-reference-evidence
+          path: |
+            runs/summary-ci-*.*
+            runs/*/baseline-ci.*
+            runs/*/verification-ci-*.json
+            runs/*/verification-ci-*.md
+          if-no-files-found: error

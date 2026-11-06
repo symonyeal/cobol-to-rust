@@ -2,7 +2,7 @@
 name = "cobol-to-rust"
 version = "0.1.0"
 edition = "2024"
-license = "MIT"
+license = "MIT AND Apache-2.0"
 description = "Byte-exact batch migration verification for reviewed COBOL-to-Rust ports"
 
 [[bin]]

@@ -2,3 +2,4 @@
 /runs/
 *.local.json
 /external/
+__pycache__/

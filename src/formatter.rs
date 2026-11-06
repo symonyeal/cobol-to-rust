@@ -1,4 +1,6 @@
 //! Port of DGFIPTools format-number.cob (MIT); revision and notice in THIRD_PARTY.md.
+// SPDX-License-Identifier: MIT
+// Copyright 2016 DGFIPTools. Modified port copyright 2026 Saimon Islam.
 use crate::Result;
 use std::io::Write;
 

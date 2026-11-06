@@ -9,3 +9,7 @@ The COBOL programs remain external to this repository. `scripts/fetch-sources.py
 | `project2.cbl` | [tylerbro93/COBOL-SALES-INVENTORY-REPORT-DEMONSTRATION `ece4ed7`](https://github.com/tylerbro93/COBOL-SALES-INVENTORY-REPORT-DEMONSTRATION/commit/ece4ed7efcbcc9a232318956cf9765d036a5b18f) | MIT | [pinned LICENSE](https://github.com/tylerbro93/COBOL-SALES-INVENTORY-REPORT-DEMONSTRATION/blob/ece4ed7efcbcc9a232318956cf9765d036a5b18f/LICENSE) |
 
 The complete license texts for these exact revisions are copied to `licenses/`. License identifiers and hashes are in `docs/sources.json`. The source bytes were admitted by exact SHA-256 match to the listed revision; this attribution does not make any claim about other revisions.
+
+The Rust formatter and sales ports retain the upstream MIT notices. `src/fxsort.rs` is an Apache-2.0 port with a modification notice. Original workbench code uses the root MIT licence; the package combines MIT and Apache-2.0 material. The IBM revision's tree has no NOTICE file.
+
+The executable `fxsort` reference uses the explicitly documented metadata-only [admission adaptation](docs/fxsort-admission.md). Run `python scripts/prepare-fxsort.py DESTINATION` after fetching the original sources. It preserves the original and creates a separately hashed source with two identification terminators and a modification notice; it does not change the procedure or data declarations.

@@ -7,6 +7,7 @@
   "profile_sha256": "cfd84796f5b1a6731f36dc894a797e14e70234711223fd9375882abacc90b8eb",
   "compiler_info_sha256": "9073ad0b47693fc618680c3d39274e3e9e488b59bb6167be0ccbdee2fb3859f1",
   "reference_captures_unchanged": true,
+  "rust_port_error_classification_checked": true,
   "results": [
     {
       "case": "formatter",
@@ -26,8 +27,8 @@
         }
       ],
       "manifest_sha256": "d59b21993ede0f1199a8cc7269935129745530203b268e78493145a127ed93e0",
-      "baseline_sha256": "bff17ec667b44efa13e6d6acb168d9e931e36bc974eefd6a85ef2d90f095de2b",
-      "rust_binary_sha256": "6ab0ca84590ce322febf68cdbd16f74baf0478613a02af09f0e230e9522bce38",
+      "baseline_sha256": "19281c28250151649ee36eb0e5c42b563169b153b0db3313fce94240fafc1d84",
+      "rust_binary_sha256": "ee4fb18fa273d5a0e5ce3f52b5b03b93f7fb81da2de065f493f9833f1d26c55d",
       "scenarios": [
         {
           "id": "all-valid-twice",
@@ -58,8 +59,8 @@
         }
       ],
       "manifest_sha256": "2faf751c9b89f33df8ddff46cd4e526befdeb9bad33e40297bf3e290d5226603",
-      "baseline_sha256": "7d7bb1bfbb6dc283224c907b65e8c8131e1ec0a680089727afb9b4aa3c92f469",
-      "rust_binary_sha256": "6ab0ca84590ce322febf68cdbd16f74baf0478613a02af09f0e230e9522bce38",
+      "baseline_sha256": "7f778ba29e4c6210bc005923d97ffafb4571091049fb6412548f4e7297f7b659",
+      "rust_binary_sha256": "ee4fb18fa273d5a0e5ce3f52b5b03b93f7fb81da2de065f493f9833f1d26c55d",
       "scenarios": [
         {
           "id": "empty-inputs",
@@ -422,8 +423,8 @@
         }
       ],
       "manifest_sha256": "2f9b5875d80c48736370853189eea9e1161fab4ccf8ed86072418a3d68719112",
-      "baseline_sha256": "41666b1547e6eb08db6c253714e64c96d01c75ce6f4668c238fa6d1c1f42ab8d",
-      "rust_binary_sha256": "6ab0ca84590ce322febf68cdbd16f74baf0478613a02af09f0e230e9522bce38",
+      "baseline_sha256": "0b9624ecf21f6aa52b24c4905c0cc1b147596fa8c96fac24bb1903b2220cf68a",
+      "rust_binary_sha256": "ee4fb18fa273d5a0e5ce3f52b5b03b93f7fb81da2de065f493f9833f1d26c55d",
       "scenarios": [
         {
           "id": "empty-input",
@@ -763,8 +764,8 @@
         }
       ],
       "manifest_sha256": "d59b21993ede0f1199a8cc7269935129745530203b268e78493145a127ed93e0",
-      "baseline_sha256": "bff17ec667b44efa13e6d6acb168d9e931e36bc974eefd6a85ef2d90f095de2b",
-      "rust_binary_sha256": "dcda67e0e9196299148425a57f0b4f6274715a46a38ff1d8e158a897e19bffda",
+      "baseline_sha256": "19281c28250151649ee36eb0e5c42b563169b153b0db3313fce94240fafc1d84",
+      "rust_binary_sha256": "1ca1f6fca3a7bc3d418a6e3427d6194454fb5d2a955769945986b4d835f2e09b",
       "scenarios": [
         {
           "id": "all-valid-twice",
@@ -795,8 +796,8 @@
         }
       ],
       "manifest_sha256": "2faf751c9b89f33df8ddff46cd4e526befdeb9bad33e40297bf3e290d5226603",
-      "baseline_sha256": "7d7bb1bfbb6dc283224c907b65e8c8131e1ec0a680089727afb9b4aa3c92f469",
-      "rust_binary_sha256": "dcda67e0e9196299148425a57f0b4f6274715a46a38ff1d8e158a897e19bffda",
+      "baseline_sha256": "7f778ba29e4c6210bc005923d97ffafb4571091049fb6412548f4e7297f7b659",
+      "rust_binary_sha256": "1ca1f6fca3a7bc3d418a6e3427d6194454fb5d2a955769945986b4d835f2e09b",
       "scenarios": [
         {
           "id": "empty-inputs",
@@ -1159,8 +1160,8 @@
         }
       ],
       "manifest_sha256": "2f9b5875d80c48736370853189eea9e1161fab4ccf8ed86072418a3d68719112",
-      "baseline_sha256": "41666b1547e6eb08db6c253714e64c96d01c75ce6f4668c238fa6d1c1f42ab8d",
-      "rust_binary_sha256": "dcda67e0e9196299148425a57f0b4f6274715a46a38ff1d8e158a897e19bffda",
+      "baseline_sha256": "0b9624ecf21f6aa52b24c4905c0cc1b147596fa8c96fac24bb1903b2220cf68a",
+      "rust_binary_sha256": "1ca1f6fca3a7bc3d418a6e3427d6194454fb5d2a955769945986b4d835f2e09b",
       "scenarios": [
         {
           "id": "empty-input",

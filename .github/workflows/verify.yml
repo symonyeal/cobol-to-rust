@@ -38,4 +38,5 @@ jobs:
             runs/*/baseline-ci.*
             runs/*/verification-ci-*.json
             runs/*/verification-ci-*.md
+            runs/infrastructure-probe-*/result.json
           if-no-files-found: error

@@ -485,6 +485,33 @@ pub fn execute(args: &[String]) -> Result<bool> {
             &job,
             timeout,
         )?;
+        // Exit 2 plus this envelope belongs to our launcher, not to an admitted program.
+        // Preserve the failed capture separately and report a run infrastructure error.
+        if actual.status.code == Some(2)
+            && let Ok(error) = serde_json::from_slice::<serde_json::Value>(&actual.stderr)
+            && error["schema_version"] == 1
+            && error["status"] == "infrastructure_error"
+        {
+            let path = case_dir.join(format!(
+                "infrastructure-{}-{}.json",
+                scenario.id,
+                std::time::SystemTime::now()
+                    .duration_since(std::time::UNIX_EPOCH)?
+                    .as_nanos()
+            ));
+            OpenOptions::new()
+                .write(true)
+                .create_new(true)
+                .open(path)?
+                .write_all(&serde_json::to_vec_pretty(&actual)?)?;
+            return Err(format!(
+                "Rust port infrastructure error: {}",
+                error["error"]
+                    .as_str()
+                    .unwrap_or("unspecified port failure")
+            )
+            .into());
+        }
         let comparison = capture::compare(&expected[0], &actual);
         pass &= comparison.equal;
         reports.push(serde_json::json!({"scenario":scenario.id,"domain":scenario.domain,"comparison":comparison,"actual":actual}));

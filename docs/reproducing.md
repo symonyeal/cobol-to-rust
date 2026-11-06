@@ -13,7 +13,7 @@ python scripts/generate-corpus.py --check
 python scripts/check-live.py --create-baselines --profile external/reference/profile.json --sources external/sources --runs runs --label first
 ```
 
-The final command builds each reference, captures every scenario three times from identical initial files, checks stability, and runs debug and release Rust verification. It hashes the reference captures before and after both verification builds. The summary JSON/Markdown and complete captures remain in `runs`. The [Windows workflow](../.github/workflows/verify.yml) runs the same live commands in a separate job from the fixture tests and retains evidence as an artifact.
+The final command builds each reference, captures every scenario three times from identical initial files, checks stability, and runs debug and release Rust verification. It hashes the reference captures before and after both verification builds. With explicit baseline creation it also builds an isolated, deliberately unimplemented port case and requires infrastructure exit 2. The summary JSON/Markdown and complete captures remain in `runs`. The [Windows workflow](../.github/workflows/verify.yml) runs the same live commands in a separate job from the fixture tests and retains evidence as an artifact.
 
 For another verification, omit `--create-baselines` and retain the same profile, paths, sources, manifest and label. Each verification and summary gets a new filename. Changing any part of the reference contract requires a new explicit baseline label; the prior captures remain in place. To examine baseline changes, compare the raw JSON captures by artifact and byte, and retain both bundles. A new passing capture does not erase an earlier mismatch.
 

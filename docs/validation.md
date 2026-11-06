@@ -30,6 +30,7 @@ The [sales corpus](../cases/sales.json) includes 44/45/46-record page boundaries
 - Comparator tests individually reject byte changes, trailing spaces, newline changes, reordered/duplicated records, missing/additional/empty files, changed status/stderr and modified/deleted inputs. Binary NUL, non-UTF-8 bytes, paths containing spaces, concurrent 1 MiB streams and timeout behavior are exercised.
 - A full CLI experiment temporarily changed the formatter comma byte to a semicolon. Verification returned 1, reported stdout offset 2 and left the reference hash unchanged. [The retained diagnostic](evidence/rejected-defect.json) records this result. The production source was restored and both build modes passed the full corpus afterward.
 - Missing required cases and malformed manifests return infrastructure failure. Blocked cases cannot pass the all-case gate. Original fxsort build failures were retained before its admission adaptation.
+- A deliberately absent Rust port entry point returns infrastructure exit 2, with its launcher diagnostic kept out of the parity comparison and the failed capture retained separately. The native probe confirmed the original capture was unchanged; fresh live CI runs exercise this check after the admitted corpus.
 
 ## Reproduction and boundaries
 

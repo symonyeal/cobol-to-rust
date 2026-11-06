@@ -4,6 +4,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import shutil
 import subprocess
 import time
 
@@ -72,12 +73,34 @@ def main():
             })
         if {case:digest(path) for case,path in baselines.items()} != before:
             raise ValueError("verification modified reference captures")
+    error_probe_checked = False
+    if args.create_baselines:
+        # A missing port entry point is a launcher failure, not a byte mismatch.
+        probe = runs / f"infrastructure-probe-{args.label}"
+        (probe / "cases").mkdir(parents=True)
+        case = json.loads((root / "cases/formatter.json").read_text())
+        case["id"] = "unimplemented"
+        for source in case["sources"]:
+            if source["root"] == "repository":
+                destination = probe / source["path"]
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(root / source["path"], destination)
+        (probe / "cases/unimplemented.json").write_text(json.dumps(case),encoding="utf-8")
+        probe_flags = ["--profile",profile_path,"--sources",sources,"--runs",probe / "runs","--label",args.label]
+        run([root / "target/debug" / executable,"baseline","unimplemented",*probe_flags],probe)
+        expected = probe / "runs/unimplemented" / f"baseline-{args.label}.json"
+        expected_hash = digest(expected)
+        failure = subprocess.run([str(v) for v in [root / "target/debug" / executable,"verify","unimplemented",*probe_flags]],cwd=probe,capture_output=True,timeout=120)
+        if failure.returncode != 2 or json.loads(failure.stderr)["status"] != "infrastructure_error" or digest(expected) != expected_hash:
+            raise ValueError("Rust port infrastructure failure was misclassified or altered the baseline")
+        (probe / "result.json").write_text(json.dumps({"exit":failure.returncode,"stdout":failure.stdout.decode(),"stderr":failure.stderr.decode(),"baseline_unchanged":True}),encoding="utf-8")
+        error_probe_checked = True
     profile = json.loads(profile_path.read_text())
     summary = {"schema_version":1, "claim":"Byte-exact for each declared corpus and input domain under the recorded execution profile; finite file corpora are not universal equivalence.",
                "profile":profile["id"], "reference_architecture":profile["reference_architecture"],
                "profile_file_manifest_sha256":hashlib.sha256(json.dumps(profile["files"],sort_keys=True).encode()).hexdigest(),
                "profile_sha256":digest(profile_path), "compiler_info_sha256":profile["compiler_info_sha256"],
-               "reference_captures_unchanged":True, "results":reports}
+               "reference_captures_unchanged":True, "rust_port_error_classification_checked":error_probe_checked,"results":reports}
     output = runs / f"summary-{args.label}-{time.time_ns()}.json"
     output.write_text(json.dumps(summary,indent=2) + "\n",encoding="utf-8",newline="\n")
     lines = ["# Live verification", "", summary["claim"], "", f"Profile: `{summary['profile']}`; reference architecture `{summary['reference_architecture']}`.", "", "| Case | Build | Scenarios | Result |", "| --- | --- | ---: | --- |"]

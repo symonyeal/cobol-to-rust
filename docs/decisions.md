@@ -81,3 +81,13 @@ These entries preserve consequential choices for engineering review and later Li
 **Evidence:** The provisioning smoke records both operations. `ACCEPT ... FROM DATE` returned `261106`; repeated sales captures were identical. The variable fractional digits remain documented in `reference-profile.md`.
 
 **Public wording:** “I tested the clock operation the program actually used. The same fixed-time setting did not make a different clock function fully deterministic.” Do not describe the profile as a universal fixed clock.
+
+## 2026-11-06 — Reproduce on a second machine
+
+**Decision:** Run the whole workflow on a clean Windows runner and compare its output hashes with the laptop's results. Keep raw profile fingerprints for each installation and pin repository line endings.
+
+**Why it matters:** `cobc --info` includes installation paths, so its raw hash legitimately differs between machines even when every compiler file is identical. The audit also found a local CRLF manifest that Git checked out as LF. Aligning that file required a new explicit baseline label because manifest fingerprints preserve exact bytes.
+
+**Evidence:** `.gitattributes`, the [clean Windows CI run](https://github.com/symonyeal/cobol-to-rust/actions/runs/42294427851), and `docs/evidence/clean-windows-ci.json`. All 962 compiler-file hashes match. Direct comparison found equal raw streams, status and file bytes across all fifty scenario observation pairs in debug and release. The earlier captures remain retained; no acceptance output was normalized.
+
+**Public wording:** “A clean Windows run reproduced the same program observations using the pinned tool files. The cross-machine audit also exposed a manifest line-ending difference, which I recorded through the baseline process.” Each physical installation still has its own profile fingerprint.

@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "ci_run": "https://github.com/symonyeal/cobol-to-rust/actions/runs/42294427851",
+  "ci_commit": "1423eda72b578b57fdd4b84e5fa64ac04740cf57",
+  "ci_conclusion": "success",
+  "compiler_file_manifest_equal": true,
+  "case_manifest_hashes_equal": true,
+  "scenario_observation_pairs": 50,
+  "raw_stdout_stderr_status_before_after_equal": true,
+  "comparison_method": "Direct equality of every raw captured byte array, status and relative filename; no normalization",
+  "compiler_info_bytes_equal": false,
+  "compiler_info_difference_review": "Installation paths and their line wrapping differ; raw identity bytes are frozen separately in each profile",
+  "local_profile_sha256": "cfd84796f5b1a6731f36dc894a797e14e70234711223fd9375882abacc90b8eb",
+  "ci_profile_sha256": "5d58a08f934f8e2115891a0ef774aa80acc4b92133d00c07aeeb7452e7564278",
+  "reference_captures_unchanged": true
+}

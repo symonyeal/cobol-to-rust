@@ -18,6 +18,54 @@ def run(command, root):
     subprocess.run([str(part) for part in command], cwd=root, check=True, timeout=600)
 
 
+def read_report(path, root, mode):
+    report = json.loads(path.read_text())
+    manifest_path = root / "cases" / f"{report['case']}.json"
+    manifest = json.loads(manifest_path.read_text())
+    if report["status"] != "byte_exact":
+        raise ValueError("non-passing case in live result")
+    return {
+        "case":report["case"], "mode":mode, "status":report["status"],
+        "source_revision":manifest["source_revision"], "sources":manifest["sources"],
+        "manifest_sha256":digest(manifest_path),
+        "baseline_sha256":report["baseline_sha256"],
+        "rust_binary_sha256":report["rust_binary_sha256"],
+        "scenarios":[{"id":s["scenario"], "domain":s["domain"],
+                      "equal":s["comparison"]["equal"],
+                      "stdout_bytes":len(s["actual"]["stdout"]),
+                      "stderr_bytes":len(s["actual"]["stderr"]),
+                      "stdout_sha256":hashlib.sha256(bytes(s["actual"]["stdout"])).hexdigest(),
+                      "stderr_sha256":hashlib.sha256(bytes(s["actual"]["stderr"])).hexdigest(),
+                      "status":s["actual"]["status"],
+                      "files":{name:{"bytes":len(data), "sha256":hashlib.sha256(bytes(data)).hexdigest()}
+                               for name,data in s["actual"]["after"].items()}}
+                     for s in report["scenarios"]],
+    }
+
+
+def infrastructure_probe(root, profile_path, sources, runs, label, executable):
+    # A missing port entry point is a launcher failure, not a byte mismatch.
+    probe = runs / f"infrastructure-probe-{label}"
+    (probe / "cases").mkdir(parents=True)
+    case = json.loads((root / "cases/formatter.json").read_text())
+    case["id"] = "unimplemented"
+    for source in case["sources"]:
+        if source["root"] == "repository":
+            destination = probe / source["path"]
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(root / source["path"], destination)
+    (probe / "cases/unimplemented.json").write_text(json.dumps(case),encoding="utf-8")
+    probe_flags = ["--profile",profile_path,"--sources",sources,"--runs",probe / "runs","--label",label]
+    run([root / "target/debug" / executable,"baseline","unimplemented",*probe_flags],probe)
+    expected = probe / "runs/unimplemented" / f"baseline-{label}.json"
+    expected_hash = digest(expected)
+    failure = subprocess.run([str(v) for v in [root / "target/debug" / executable,"verify","unimplemented",*probe_flags]],cwd=probe,capture_output=True,timeout=120)
+    if failure.returncode != 2 or json.loads(failure.stderr)["status"] != "infrastructure_error" or digest(expected) != expected_hash:
+        raise ValueError("Rust port infrastructure failure was misclassified or altered the baseline")
+    (probe / "result.json").write_text(json.dumps({"exit":failure.returncode,"stdout":failure.stdout.decode(),"stderr":failure.stderr.decode(),"baseline_unchanged":True}),encoding="utf-8")
+    return True
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--profile", required=True, type=Path)
@@ -48,53 +96,12 @@ def main():
         fresh = set(runs.glob(f"*/verification-{args.label}-*.json")) - old
         if len(fresh) != len(required):
             raise ValueError("verification did not produce exactly one report per required case")
-        for path in sorted(fresh):
-            report = json.loads(path.read_text())
-            manifest_path = root / "cases" / f"{report['case']}.json"
-            manifest = json.loads(manifest_path.read_text())
-            if report["status"] != "byte_exact":
-                raise ValueError("non-passing case in live result")
-            reports.append({
-                "case":report["case"], "mode":mode, "status":report["status"],
-                "source_revision":manifest["source_revision"], "sources":manifest["sources"],
-                "manifest_sha256":digest(manifest_path),
-                "baseline_sha256":report["baseline_sha256"],
-                "rust_binary_sha256":report["rust_binary_sha256"],
-                "scenarios":[{"id":s["scenario"], "domain":s["domain"],
-                              "equal":s["comparison"]["equal"],
-                              "stdout_bytes":len(s["actual"]["stdout"]),
-                              "stderr_bytes":len(s["actual"]["stderr"]),
-                              "stdout_sha256":hashlib.sha256(bytes(s["actual"]["stdout"])).hexdigest(),
-                              "stderr_sha256":hashlib.sha256(bytes(s["actual"]["stderr"])).hexdigest(),
-                              "status":s["actual"]["status"],
-                              "files":{name:{"bytes":len(data), "sha256":hashlib.sha256(bytes(data)).hexdigest()}
-                                       for name,data in s["actual"]["after"].items()}}
-                             for s in report["scenarios"]],
-            })
+        reports.extend(read_report(path, root, mode) for path in sorted(fresh))
         if {case:digest(path) for case,path in baselines.items()} != before:
             raise ValueError("verification modified reference captures")
     error_probe_checked = False
     if args.create_baselines:
-        # A missing port entry point is a launcher failure, not a byte mismatch.
-        probe = runs / f"infrastructure-probe-{args.label}"
-        (probe / "cases").mkdir(parents=True)
-        case = json.loads((root / "cases/formatter.json").read_text())
-        case["id"] = "unimplemented"
-        for source in case["sources"]:
-            if source["root"] == "repository":
-                destination = probe / source["path"]
-                destination.parent.mkdir(parents=True, exist_ok=True)
-                shutil.copyfile(root / source["path"], destination)
-        (probe / "cases/unimplemented.json").write_text(json.dumps(case),encoding="utf-8")
-        probe_flags = ["--profile",profile_path,"--sources",sources,"--runs",probe / "runs","--label",args.label]
-        run([root / "target/debug" / executable,"baseline","unimplemented",*probe_flags],probe)
-        expected = probe / "runs/unimplemented" / f"baseline-{args.label}.json"
-        expected_hash = digest(expected)
-        failure = subprocess.run([str(v) for v in [root / "target/debug" / executable,"verify","unimplemented",*probe_flags]],cwd=probe,capture_output=True,timeout=120)
-        if failure.returncode != 2 or json.loads(failure.stderr)["status"] != "infrastructure_error" or digest(expected) != expected_hash:
-            raise ValueError("Rust port infrastructure failure was misclassified or altered the baseline")
-        (probe / "result.json").write_text(json.dumps({"exit":failure.returncode,"stdout":failure.stdout.decode(),"stderr":failure.stderr.decode(),"baseline_unchanged":True}),encoding="utf-8")
-        error_probe_checked = True
+        error_probe_checked = infrastructure_probe(root, profile_path, sources, runs, args.label, executable)
     profile = json.loads(profile_path.read_text())
     summary = {"schema_version":1, "claim":"Byte-exact for each declared corpus and input domain under the recorded execution profile; finite file corpora are not universal equivalence.",
                "profile":profile["id"], "reference_architecture":profile["reference_architecture"],

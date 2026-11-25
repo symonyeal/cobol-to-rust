@@ -231,46 +231,50 @@ fn flag<'a>(args: &'a [String], key: &str) -> Result<&'a str> {
         .ok_or_else(|| format!("missing value for {key}").into())
 }
 
-pub fn execute(args: &[String]) -> Result<bool> {
-    let operation = args.first().ok_or("missing operation")?;
-    if operation == "verify" && args.get(1).map(String::as_str) == Some("--all") {
-        let ids: Vec<String> = serde_json::from_slice(&fs::read("cases/required.json")?)?;
-        if ids.is_empty()
-            || ids.iter().collect::<std::collections::BTreeSet<_>>().len() != ids.len()
-        {
-            return Err("required case registry is empty".into());
-        }
-        let mut all = true;
-        let mut errors = Vec::new();
-        for id in ids {
-            let mut argv = args.to_vec();
-            argv[1] = id;
-            match execute(&argv) {
-                Ok(pass) => all &= pass,
-                Err(e) => {
-                    all = false;
-                    errors.push(e.to_string());
-                }
+struct ExecutionProfile {
+    profile: Profile,
+    bytes: Vec<u8>,
+    root: PathBuf,
+    env: BTreeMap<OsString, OsString>,
+}
+
+struct Run {
+    case_dir: PathBuf,
+    job: PathBuf,
+    label: String,
+    baseline_path: PathBuf,
+    profile_sha256: String,
+    job_path_sha256: String,
+    manifest_sha256: String,
+    timeout: Duration,
+    _lock: Lock,
+}
+
+fn verify_all(args: &[String]) -> Result<bool> {
+    let ids: Vec<String> = serde_json::from_slice(&fs::read("cases/required.json")?)?;
+    if ids.is_empty() || ids.iter().collect::<std::collections::BTreeSet<_>>().len() != ids.len() {
+        return Err("required case registry is empty".into());
+    }
+    let mut all = true;
+    let mut errors = Vec::new();
+    for id in ids {
+        let mut argv = args.to_vec();
+        argv[1] = id;
+        match execute(&argv) {
+            Ok(pass) => all &= pass,
+            Err(e) => {
+                all = false;
+                errors.push(e.to_string());
             }
         }
-        if !errors.is_empty() {
-            return Err(
-                format!("required case infrastructure errors: {}", errors.join("; ")).into(),
-            );
-        }
-        return Ok(all);
     }
-    let (case, manifest) = load(args.get(1).ok_or("missing case")?)?;
-    if case.admission != "admitted"
-        || !case.blockers.is_empty()
-        || (operation == "verify" && !case.reviewed)
-    {
-        println!(
-            "{}",
-            serde_json::json!({"schema_version":1,"case":case.id,"status":"blocked","blockers":case.blockers})
-        );
-        return Ok(false);
+    if !errors.is_empty() {
+        return Err(format!("required case infrastructure errors: {}", errors.join("; ")).into());
     }
+    Ok(all)
+}
+
+fn validate_case(case: &Case) -> Result<()> {
     if case.repetitions < 3
         || case.scenarios.is_empty()
         || case.timeout_ms == 0
@@ -286,6 +290,10 @@ pub fn execute(args: &[String]) -> Result<bool> {
         }
         initial(scenario)?;
     }
+    Ok(())
+}
+
+fn execution_profile(args: &[String]) -> Result<ExecutionProfile> {
     let profile_bytes = fs::read(flag(args, "--profile")?)?;
     let profile: Profile = serde_json::from_slice(&profile_bytes)?;
     if profile.schema_version != 1
@@ -317,6 +325,15 @@ pub fn execute(args: &[String]) -> Result<bool> {
             value.replace("${ROOT}", &root.to_string_lossy()).into(),
         );
     }
+    Ok(ExecutionProfile {
+        profile,
+        bytes: profile_bytes,
+        root,
+        env,
+    })
+}
+
+fn case_sources(case: &Case, args: &[String]) -> Result<Vec<OsString>> {
     let external = canonical(flag(args, "--sources")?)?;
     let repo = canonical(".")?;
     let mut sources = Vec::new();
@@ -332,6 +349,10 @@ pub fn execute(args: &[String]) -> Result<bool> {
         }
         sources.push(path.into_os_string());
     }
+    Ok(sources)
+}
+
+fn prepare_run(case: &Case, args: &[String], manifest: &[u8], profile_bytes: &[u8]) -> Result<Run> {
     let runs = PathBuf::from(flag(args, "--runs")?);
     fs::create_dir_all(&runs)?;
     let runs = canonical(runs)?;
@@ -350,194 +371,252 @@ pub fn execute(args: &[String]) -> Result<bool> {
     let job = case_dir.join("job");
     let label = identifier(flag(args, "--label")?)?;
     let baseline_path = case_dir.join(format!("baseline-{label}.json"));
-    let profile_sha256 = digest(&profile_bytes);
+    let profile_sha256 = digest(profile_bytes);
     let job_path_sha256 = digest(job.as_os_str().to_string_lossy().as_bytes());
-    let manifest_sha256 = digest(&manifest);
+    let manifest_sha256 = digest(manifest);
     let timeout = Duration::from_millis(case.timeout_ms);
-    if operation == "baseline" {
-        if baseline_path.exists() {
-            return Err("baseline exists; use a new label to retain both captures".into());
-        }
-        let build = case_dir.join(format!("build-{label}"));
-        fs::create_dir(&build)?;
-        let info = capture::capture(
-            &root.join(&profile.cobc),
-            &["--info".into()],
-            &env,
-            &build,
-            &build,
-            timeout,
-        )?;
-        fs::write(
-            build.join("compiler-info.json"),
-            serde_json::to_vec_pretty(&info)?,
-        )?;
-        if !info.status.success
-            || !info.stderr.is_empty()
-            || digest(&info.stdout) != profile.compiler_info_sha256
-        {
-            return Err("compiler identity check failed".into());
-        }
-        let exe = build.join(if cfg!(windows) {
-            "reference.exe"
-        } else {
-            "reference"
-        });
-        let mut build_args: Vec<OsString> = case.build_args.iter().map(Into::into).collect();
-        build_args.extend([OsString::from("-o"), exe.as_os_str().to_owned()]);
-        build_args.extend(sources);
-        let built = capture::capture(
-            &root.join(&profile.cobc),
-            &build_args,
-            &env,
-            &build,
-            &build,
-            timeout,
-        )?;
-        fs::write(build.join("build.json"), serde_json::to_vec_pretty(&built)?)?;
-        if !built.status.success {
-            return Err("COBOL build failed (retained build.json)".into());
-        }
-        let mut captures = BTreeMap::new();
-        for scenario in &case.scenarios {
-            let mut repetitions = Vec::new();
-            for _ in 0..case.repetitions {
-                restore(&job, &initial(scenario)?)?;
-                repetitions.push(capture::capture(
-                    &exe,
-                    &scenario
-                        .reference_args
-                        .as_ref()
-                        .unwrap_or(&case.reference_args)
-                        .iter()
-                        .map(Into::into)
-                        .collect::<Vec<_>>(),
-                    &env,
-                    &job,
-                    &job,
-                    timeout,
-                )?);
-            }
-            captures.insert(scenario.id.clone(), repetitions);
-        }
-        let stable = captures
-            .values()
-            .all(|v| v.iter().all(|r| capture::compare(&v[0], r).equal));
-        let baseline = Baseline {
-            schema_version: 1,
-            case: case.id.clone(),
-            manifest_sha256,
-            profile_sha256,
-            job_path_sha256,
-            compiler_info: info.stdout,
-            reference_binary_sha256: digest(&fs::read(&exe)?),
-            captures,
-        };
-        let target = if stable {
-            baseline_path
-        } else {
-            case_dir.join(format!("unstable-{label}.json"))
-        };
-        OpenOptions::new()
-            .write(true)
-            .create_new(true)
-            .open(&target)?
-            .write_all(&serde_json::to_vec_pretty(&baseline)?)?;
-        OpenOptions::new().write(true).create_new(true).open(target.with_extension("md"))?.write_all(
-            format!("# Reference baseline: {}\n\nStatus: {}. Profile: `{}`.\n\n{} scenarios, {} runs each. The JSON retains every raw byte and process status. Capture equality covers all regular-file bytes before and after each job.\n",case.id,if stable {"stable"} else {"variable; certification blocked"},profile.id,case.scenarios.len(),case.repetitions).as_bytes())?;
-        println!(
-            "{}",
-            serde_json::json!({"schema_version":1,"case":case.id,"status":if stable {"stable_baseline"} else {"variable_reference"},"repetitions":case.repetitions,"scenarios":case.scenarios.len()})
-        );
-        return Ok(stable);
+    Ok(Run {
+        case_dir,
+        job,
+        label: label.to_string(),
+        baseline_path,
+        profile_sha256,
+        job_path_sha256,
+        manifest_sha256,
+        timeout,
+        _lock,
+    })
+}
+
+fn build_reference(
+    case: &Case,
+    execution: &ExecutionProfile,
+    sources: Vec<OsString>,
+    run: &Run,
+) -> Result<(PathBuf, Capture)> {
+    let ExecutionProfile {
+        profile, root, env, ..
+    } = execution;
+    let case_dir = &run.case_dir;
+    let label = &run.label;
+    let build = case_dir.join(format!("build-{label}"));
+    fs::create_dir(&build)?;
+    let info = capture::capture(
+        &root.join(&profile.cobc),
+        &["--info".into()],
+        env,
+        &build,
+        &build,
+        run.timeout,
+    )?;
+    fs::write(
+        build.join("compiler-info.json"),
+        serde_json::to_vec_pretty(&info)?,
+    )?;
+    if !info.status.success
+        || !info.stderr.is_empty()
+        || digest(&info.stdout) != profile.compiler_info_sha256
+    {
+        return Err("compiler identity check failed".into());
     }
-    let baseline_bytes = fs::read(&baseline_path)?;
+    let exe = build.join(if cfg!(windows) {
+        "reference.exe"
+    } else {
+        "reference"
+    });
+    let mut build_args: Vec<OsString> = case.build_args.iter().map(Into::into).collect();
+    build_args.extend([OsString::from("-o"), exe.as_os_str().to_owned()]);
+    build_args.extend(sources);
+    let built = capture::capture(
+        &root.join(&profile.cobc),
+        &build_args,
+        env,
+        &build,
+        &build,
+        run.timeout,
+    )?;
+    fs::write(build.join("build.json"), serde_json::to_vec_pretty(&built)?)?;
+    if !built.status.success {
+        return Err("COBOL build failed (retained build.json)".into());
+    }
+    Ok((exe, info))
+}
+
+fn reference_captures(
+    case: &Case,
+    exe: &Path,
+    env: &BTreeMap<OsString, OsString>,
+    job: &Path,
+    timeout: Duration,
+) -> Result<BTreeMap<String, Vec<Capture>>> {
+    let mut captures = BTreeMap::new();
+    for scenario in &case.scenarios {
+        let mut repetitions = Vec::new();
+        for _ in 0..case.repetitions {
+            restore(job, &initial(scenario)?)?;
+            repetitions.push(capture::capture(
+                exe,
+                &scenario
+                    .reference_args
+                    .as_ref()
+                    .unwrap_or(&case.reference_args)
+                    .iter()
+                    .map(Into::into)
+                    .collect::<Vec<_>>(),
+                env,
+                job,
+                job,
+                timeout,
+            )?);
+        }
+        captures.insert(scenario.id.clone(), repetitions);
+    }
+    Ok(captures)
+}
+
+fn save_baseline(
+    case: &Case,
+    execution: &ExecutionProfile,
+    sources: Vec<OsString>,
+    run: &Run,
+) -> Result<bool> {
+    let profile = &execution.profile;
+    let (exe, info) = build_reference(case, execution, sources, run)?;
+    let captures = reference_captures(case, &exe, &execution.env, &run.job, run.timeout)?;
+    let Run {
+        case_dir,
+        label,
+        baseline_path,
+        manifest_sha256,
+        profile_sha256,
+        job_path_sha256,
+        ..
+    } = run;
+    let stable = captures
+        .values()
+        .all(|v| v.iter().all(|r| capture::compare(&v[0], r).equal));
+    let baseline = Baseline {
+        schema_version: 1,
+        case: case.id.clone(),
+        manifest_sha256: manifest_sha256.clone(),
+        profile_sha256: profile_sha256.clone(),
+        job_path_sha256: job_path_sha256.clone(),
+        compiler_info: info.stdout,
+        reference_binary_sha256: digest(&fs::read(&exe)?),
+        captures,
+    };
+    let target = if stable {
+        baseline_path.clone()
+    } else {
+        case_dir.join(format!("unstable-{label}.json"))
+    };
+    OpenOptions::new()
+        .write(true)
+        .create_new(true)
+        .open(&target)?
+        .write_all(&serde_json::to_vec_pretty(&baseline)?)?;
+    OpenOptions::new().write(true).create_new(true).open(target.with_extension("md"))?.write_all(
+        format!("# Reference baseline: {}\n\nStatus: {}. Profile: `{}`.\n\n{} scenarios, {} runs each. The JSON retains every raw byte and process status. Capture equality covers all regular-file bytes before and after each job.\n",case.id,if stable {"stable"} else {"variable; certification blocked"},profile.id,case.scenarios.len(),case.repetitions).as_bytes())?;
+    println!(
+        "{}",
+        serde_json::json!({"schema_version":1,"case":case.id,"status":if stable {"stable_baseline"} else {"variable_reference"},"repetitions":case.repetitions,"scenarios":case.scenarios.len()})
+    );
+    Ok(stable)
+}
+
+fn load_baseline(case: &Case, run: &Run) -> Result<(Baseline, Vec<u8>)> {
+    let baseline_bytes = fs::read(&run.baseline_path)?;
     let baseline: Baseline = serde_json::from_slice(&baseline_bytes)?;
     if baseline.schema_version != 1
         || baseline.case != case.id
-        || baseline.manifest_sha256 != manifest_sha256
-        || baseline.profile_sha256 != profile_sha256
-        || baseline.job_path_sha256 != job_path_sha256
+        || baseline.manifest_sha256 != run.manifest_sha256
+        || baseline.profile_sha256 != run.profile_sha256
+        || baseline.job_path_sha256 != run.job_path_sha256
     {
         return Err("baseline contract changed; explicit new baseline required".into());
     }
     if baseline.captures.len() != case.scenarios.len() {
         return Err("baseline scenario set changed".into());
     }
-    let mut reports = Vec::new();
-    let mut pass = true;
-    for scenario in &case.scenarios {
-        let expected = baseline
-            .captures
-            .get(&scenario.id)
-            .ok_or("required scenario absent from baseline")?;
-        if expected.len() != case.repetitions
-            || !expected
-                .iter()
-                .all(|r| capture::compare(&expected[0], r).equal)
-        {
-            return Err("baseline is incomplete or unstable".into());
-        }
-        restore(&job, &initial(scenario)?)?;
-        let mut port_args: Vec<OsString> = vec!["port".into(), case.id.clone().into()];
-        port_args.extend(scenario.port_args.iter().map(Into::into));
-        let actual = capture::capture(
-            &std::env::current_exe()?,
-            &port_args,
-            &env,
-            &job,
-            &job,
-            timeout,
-        )?;
-        // Exit 2 plus this envelope belongs to our launcher, not to an admitted program.
-        // Preserve the failed capture separately and report a run infrastructure error.
-        if actual.status.code == Some(2)
-            && let Ok(error) = serde_json::from_slice::<serde_json::Value>(&actual.stderr)
-            && error["schema_version"] == 1
-            && error["status"] == "infrastructure_error"
-        {
-            let path = case_dir.join(format!(
-                "infrastructure-{}-{}.json",
-                scenario.id,
-                std::time::SystemTime::now()
-                    .duration_since(std::time::UNIX_EPOCH)?
-                    .as_nanos()
-            ));
-            OpenOptions::new()
-                .write(true)
-                .create_new(true)
-                .open(path)?
-                .write_all(&serde_json::to_vec_pretty(&actual)?)?;
-            return Err(format!(
-                "Rust port infrastructure error: {}",
-                error["error"]
-                    .as_str()
-                    .unwrap_or("unspecified port failure")
-            )
-            .into());
-        }
-        let comparison = capture::compare(&expected[0], &actual);
-        pass &= comparison.equal;
-        reports.push(serde_json::json!({"scenario":scenario.id,"domain":scenario.domain,"comparison":comparison,"actual":actual}));
+    Ok((baseline, baseline_bytes))
+}
+
+fn port_capture(
+    case: &Case,
+    scenario: &Scenario,
+    baseline: &Baseline,
+    env: &BTreeMap<OsString, OsString>,
+    run: &Run,
+) -> Result<Capture> {
+    let case_dir = &run.case_dir;
+    let job = &run.job;
+    let timeout = run.timeout;
+    let expected = baseline
+        .captures
+        .get(&scenario.id)
+        .ok_or("required scenario absent from baseline")?;
+    if expected.len() != case.repetitions
+        || !expected
+            .iter()
+            .all(|r| capture::compare(&expected[0], r).equal)
+    {
+        return Err("baseline is incomplete or unstable".into());
     }
-    let result = serde_json::json!({"schema_version":1,"case":case.id,"status":if pass {"byte_exact"} else {"mismatch"},"scope":"declared corpus and input domain only","profile":profile.id,"profile_sha256":profile_sha256,"baseline_sha256":digest(&baseline_bytes),"rust_binary_sha256":digest(&fs::read(std::env::current_exe()?)?),"scenarios":reports});
-    let report_path = case_dir.join(format!(
-        "verification-{label}-{}.json",
-        std::time::SystemTime::now()
-            .duration_since(std::time::UNIX_EPOCH)?
-            .as_nanos()
-    ));
-    OpenOptions::new()
-        .write(true)
-        .create_new(true)
-        .open(&report_path)?
-        .write_all(&serde_json::to_vec_pretty(&result)?)?;
+    restore(job, &initial(scenario)?)?;
+    let mut port_args: Vec<OsString> = vec!["port".into(), case.id.clone().into()];
+    port_args.extend(scenario.port_args.iter().map(Into::into));
+    let actual = capture::capture(
+        &std::env::current_exe()?,
+        &port_args,
+        env,
+        job,
+        job,
+        timeout,
+    )?;
+    // Exit 2 plus this envelope belongs to our launcher, not to an admitted program.
+    // Preserve the failed capture separately and report a run infrastructure error.
+    if actual.status.code == Some(2)
+        && let Ok(error) = serde_json::from_slice::<serde_json::Value>(&actual.stderr)
+        && error["schema_version"] == 1
+        && error["status"] == "infrastructure_error"
+    {
+        let path = case_dir.join(format!(
+            "infrastructure-{}-{}.json",
+            scenario.id,
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)?
+                .as_nanos()
+        ));
+        OpenOptions::new()
+            .write(true)
+            .create_new(true)
+            .open(path)?
+            .write_all(&serde_json::to_vec_pretty(&actual)?)?;
+        return Err(format!(
+            "Rust port infrastructure error: {}",
+            error["error"]
+                .as_str()
+                .unwrap_or("unspecified port failure")
+        )
+        .into());
+    }
+    Ok(actual)
+}
+
+fn write_verification_markdown(
+    case: &Case,
+    profile: &Profile,
+    baseline_bytes: &[u8],
+    result: &serde_json::Value,
+    report_path: &Path,
+    pass: bool,
+) -> Result<()> {
     let mut markdown = format!(
         "# Verification: {}\n\nStatus: {}. Profile: `{}`.\n\nScope: declared corpus and input domain only. Baseline SHA-256: `{}`.\n",
         case.id,
         if pass { "byte-exact" } else { "mismatch" },
         profile.id,
-        digest(&baseline_bytes)
+        digest(baseline_bytes)
     );
     for scenario in result["scenarios"]
         .as_array()
@@ -561,11 +640,70 @@ pub fn execute(args: &[String]) -> Result<bool> {
         .create_new(true)
         .open(report_path.with_extension("md"))?
         .write_all(markdown.as_bytes())?;
+    Ok(())
+}
+
+fn verify_port(case: &Case, execution: &ExecutionProfile, run: &Run) -> Result<bool> {
+    let profile = &execution.profile;
+    let label = &run.label;
+    let (baseline, baseline_bytes) = load_baseline(case, run)?;
+    let mut reports = Vec::new();
+    let mut pass = true;
+    for scenario in &case.scenarios {
+        let actual = port_capture(case, scenario, &baseline, &execution.env, run)?;
+        let expected = &baseline.captures[&scenario.id];
+        let comparison = capture::compare(&expected[0], &actual);
+        pass &= comparison.equal;
+        reports.push(serde_json::json!({"scenario":scenario.id,"domain":scenario.domain,"comparison":comparison,"actual":actual}));
+    }
+    let result = serde_json::json!({"schema_version":1,"case":case.id,"status":if pass {"byte_exact"} else {"mismatch"},"scope":"declared corpus and input domain only","profile":profile.id,"profile_sha256":run.profile_sha256,"baseline_sha256":digest(&baseline_bytes),"rust_binary_sha256":digest(&fs::read(std::env::current_exe()?)?),"scenarios":reports});
+    let report_path = run.case_dir.join(format!(
+        "verification-{label}-{}.json",
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)?
+            .as_nanos()
+    ));
+    OpenOptions::new()
+        .write(true)
+        .create_new(true)
+        .open(&report_path)?
+        .write_all(&serde_json::to_vec_pretty(&result)?)?;
+    write_verification_markdown(case, profile, &baseline_bytes, &result, &report_path, pass)?;
     println!(
         "{}",
         serde_json::json!({"schema_version":1,"case":case.id,"status":result["status"],"scenario_count":case.scenarios.len(),"profile":profile.id})
     );
     Ok(pass)
+}
+
+pub fn execute(args: &[String]) -> Result<bool> {
+    let operation = args.first().ok_or("missing operation")?;
+    if operation == "verify" && args.get(1).map(String::as_str) == Some("--all") {
+        return verify_all(args);
+    }
+    let (case, manifest) = load(args.get(1).ok_or("missing case")?)?;
+    if case.admission != "admitted"
+        || !case.blockers.is_empty()
+        || (operation == "verify" && !case.reviewed)
+    {
+        println!(
+            "{}",
+            serde_json::json!({"schema_version":1,"case":case.id,"status":"blocked","blockers":case.blockers})
+        );
+        return Ok(false);
+    }
+    validate_case(&case)?;
+    let execution = execution_profile(args)?;
+    let sources = case_sources(&case, args)?;
+    let run = prepare_run(&case, args, &manifest, &execution.bytes)?;
+    if operation == "baseline" {
+        if run.baseline_path.exists() {
+            return Err("baseline exists; use a new label to retain both captures".into());
+        }
+        save_baseline(&case, &execution, sources, &run)
+    } else {
+        verify_port(&case, &execution, &run)
+    }
 }
 
 pub fn port(args: &[String]) -> Result<i32> {
